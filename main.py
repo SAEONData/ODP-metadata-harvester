@@ -9,10 +9,6 @@ def main():
     test = hello.harvest_records()
     return test
 
-
-
-
-
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--excel-file", required=True, help="location of the input Excel file")
