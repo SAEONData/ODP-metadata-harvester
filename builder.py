@@ -292,46 +292,40 @@ class SANS1878Builder(Builder):
         else:
             self.record["date"] = date.strftime("%Y-%2m-%2d")
 
+    def add_responsible_party(self, name='', organization='', contact_info='', role='', position_name='',
+                              online_resource=None):
+        responsibleParties = {
+            "individualName": name,
+            "organizationName": organization,
+            "contactInfo": contact_info,
+            'positionName': position_name,
+            'role': role,
+        }
+
+        return self.record['responsibleParties'].append(responsibleParties)
 
     def set_responsible_party(self, responsible_parties_array):
-        pass
-        # for rparty in responsible_parties_array:
-        #     contactInfo = "%r" % rparty['contactInfo']
-        #     # contactInfo = rparty['contactInfo']
-        #     if contactInfo == "''":
-        #         contactInfo = ''
-        #         # print("Invalid contact info {} {}".format(rparty, record['fileIdentifier']))
-        #         # continue
-        #     if len(rparty['email']) > 0:
-        #         contactInfo = contactInfo + "," + rparty['email']
-        #
-        #     role_fixes = {'': '', 'resourceprovider': 'resourceProvider', 'custodian': 'custodian', 'owner': 'owner',
-        #                   'user': 'user', 'distributor': 'distributor', 'originator': 'originator',
-        #                   'pointofcontact': 'pointOfContact', 'principleinvestigator': 'principalInvestigator',
-        #                   'principalinvestigator': 'principalInvestigator', 'processor': 'processor',
-        #                   'publisher': 'publisher'}
-        #
-        #     def add responsible_party(self, name='', organization='', contact_info='', role='', position_name='',
-        #                           online_resource=None):
-        #
-        #
-        #
-        #     schema_generator.add_responsible_party("%r" % rparty['individualName'], rparty['organizationName'],
-        #                                            contactInfo, role_fixes[rparty['role'].lower()],
-        #                                            rparty['positionName'])  # , online_resource)
-        # responsible_party = {
-        #     "individualName": name,
-        #     "organizationName": organization,
-        #     "contactInfo": contact_info,
-        #     'positionName': position_name,
-        #     'role': role,
-        # }
-        #
-        # if online_resource:
-        #     link = {"linkage": online_resource}
-        #     responsible_party['onlineResource'] = link
-        #
-        # self.record["responsibleParties"].append(responsible_party)
+        role_fixes = {'': '', 'resourceprovider': 'resourceProvider', 'custodian': 'custodian', 'owner': 'owner',
+                      'user': 'user', 'distributor': 'distributor', 'originator': 'originator',
+                      'pointofcontact': 'pointOfContact', 'principleinvestigator': 'principalInvestigator',
+                      'principalinvestigator': 'principalInvestigator', 'processor': 'processor',
+                      'publisher': 'publisher'}
+        for rparty in responsible_parties_array:
+            contactInfo = "%r" % rparty['contactInfo']
+            # contactInfo = rparty['contactInfo']
+            if contactInfo == "''":
+                contactInfo = ''
+                # print("Invalid contact info {} {}".format(rparty, record['fileIdentifier']))
+                # continue
+            if len(rparty['email']) > 0:
+                contactInfo = contactInfo + "," + rparty['email']
+            self.add_responsible_party("%r" % rparty['individualName'], rparty['organizationName'],
+                                                   contactInfo, role_fixes[rparty['role'].lower()],
+                                                   rparty['positionName'])  # , online_resource)
+
+
+
+
 
     def set_geographic_identifier(self, identifier):
         if str(identifier) == 'nan':
