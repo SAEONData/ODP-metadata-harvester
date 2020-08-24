@@ -64,6 +64,7 @@ class ExcelImporter:
         self.parse_field_to_dict(record,'boundingBox',
                                        ['northBoundLatitude', 'southBoundLatitude',
                                        'eastBoundLongitude', 'westBoundLongitude'],True)
+        self.parse_field_to_dict(record,'verticalElement',['minimumValue','maximumValue','unitOfMeasure', 'verticalDatum'],True)
 
     def parse_file_identifier(self, record):
         if type(record['fileIdentifier']) == float:

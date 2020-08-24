@@ -334,14 +334,13 @@ class SANS1878Builder(Builder):
             self.record["extent"]["geographicElements"][0]["geographicIdentifier"] = identifier
 
     def set_bounding_box_extent(self, bounding_box):
-        bounding_box_template = {
-            "westBoundLongitude": None,
-            "eastBoundLongitude": None,
-            "southBoundLatitude": None,
-            "northBoundLatitude": None
+        box = {
+            "westBoundLongitude": float(bounding_box['westBoundLongitude']),
+            "eastBoundLongitude": float(bounding_box['eastBoundLongitude']),
+            "southBoundLatitude": float(bounding_box['southBoundLatitude']),
+            "northBoundLatitude": float(bounding_box['northBoundLatitude'])
         }
-
-        self.record["extent"]["geographicElements"][0]["boundingBox"] = bounding_box
+        self.record["extent"]["geographicElements"][0]["boundingBox"] = box
 
     def add_bounding_polygon(self,polygon):
         if type(polygon) != list or len(polygon) < 5:
@@ -357,7 +356,12 @@ class SANS1878Builder(Builder):
 
         self.record["extent"]["geographicElements"][0]["boundingPolygon"].append(polygon)
 
-    def set_vertical_extent(self, minimum_value, maximum_value, unit_of_measure, vertical_datum):
+    def set_vertical_extent(self, vertical_elements):
+
+        minimum_value = vertical_elements['minimumValue']
+        maximum_value = vertical_elements['maximumValue']
+        unit_of_measure = vertical_elements['unitOfMeasure']
+        vertical_datum = vertical_elements['verticalDatum']
         vertical_extent = {
             "minimumValue": minimum_value,
             "maximumValue": maximum_value,
@@ -405,23 +409,31 @@ class SANS1878Builder(Builder):
         self.record["distributionFormats"].append(format)
 
     def set_spatial_representation_type(self, represenation):
-        if type(represenation) != list:
-            raise SANSSchemaFormatError("Invalid spatial representation type, must be a list")
-        self.record["spatialRepresentationTypes"] = represenation
+        if str(represenation) == 'nan':
+            self.record["spatialRepresentationTypes"] = ''
+        else:
+            rep_type_fixes = {'': '', 'vector': 'vector', 'grid': 'grid', \
+                          'texttable': 'textTable', 'tin': 'tin', 'stereomodel': 'stereoModel', \
+                          'video': 'video', 'image': 'image'}
+            self.record["spatialRepresentationTypes"] = [rep_type_fixes[represenation.lower()]]
 
-    def set_reference_system_name(self, codespace, version):
-        self.record["referenceSystemName"] = {"codeSpace": codespace, "version": version}
+    def set_reference_system_name(self, reference):
+        self.record["referenceSystemName"] = {"codeSpace": reference['codeSpace'], "version": reference['version']}
 
     def set_lineage_statement(self, lineage):
         self.record["lineageStatement"] = lineage
 
-    def add_online_resources(self, name='', description='', link=''):
-        online_resource = {
-            "name": name.replace(" ", ""),
-            "description": description.replace(" ", ""),
-            "linkage": link.replace(" ", "")
-        }
-        self.record["onlineResources"].append(online_resource)
+    def add_online_resources(self, onlineResources):
+        for resource in onlineResources:
+            if str(resource) == 'nan':
+                self.record["onlineResources"] =''
+            else:
+                online_resource = {
+                    "name": resource['name'],
+                    "description": resource['description'],
+                    "linkage": resource['linkage']
+                }
+                self.record["onlineResources"].append(online_resource)
 
     def set_file_identifier(self, file_identifier):
         if type(file_identifier) != str:
@@ -441,6 +453,7 @@ class SANS1878Builder(Builder):
         self.record["metadataCharacterSet"] = characterset
 
     def set_metadata_time_stamp(self, timestamp):
+        timestamp = self.convert_date(timestamp)
         if type(timestamp) != datetime:
             raise SANSSchemaFormatError("Invalid metadata timestamp, must be datetime")
         format = "%Y-%m-%dT%H:%M:%S"
@@ -459,11 +472,47 @@ class SANS1878Builder(Builder):
             raise SANSSchemaFormatError("Invalid status type, must be a list")
         self.record["status"] = status
 
-    def add_descriptive_key_words(self, keyword_type, keyword):
-        self.record["descriptiveKeywords"].append({
-            "keywordType": keyword_type,
-            "keyword": keyword
-        })
+
+    def add_placeKeywords(self, keywords):
+        if str(keywords) == 'nan':
+            return
+        else:
+            raw_str = record[field_name]
+            for item in raw_str.split(","):
+                detail = {'keywordType': 'place', 'keyword': ''}
+                detail['keyword'] = item
+                descriptive_keywords.append(detail)
+            if not append_mode:
+                record['descriptiveKeywords'] = descriptive_keywords
+            else:
+                record['descriptiveKeywords'] = record['descriptiveKeywords'] + descriptive_keywords
+
+        for word in keywords:
+            self.record["descriptiveKeywords"].append({
+                "keywordType": word['keywordType'].replace(' ', ''),
+                "keyword": word['keyword']
+            })
+
+
+
+    def add_keywords(self, keywords):
+        for word in keywords:
+            self.record["descriptiveKeywords"].append({
+                "keywordType": word['keywordType'].replace(' ', ''),
+                "keyword": word['keyword']
+            })
+
+    def add_descriptiveKeywords(self, keywordArray):
+        if str(keywordArray) == 'nan':
+            return
+        else:
+            for word in keywordArray:
+                self.record["descriptiveKeywords"].append({
+                    "keywordType": word['keywordType'].replace(' ', ''),
+                    "keyword": word['keyword']
+                })
+
+
 
     def set_constraints(self, rights, rights_uri, access_constraints, use_constraints='', classification='',
                         use_limitations=''):
@@ -483,9 +532,6 @@ class SANS1878Builder(Builder):
             "relatedIdentifierType": id_type,
             "relationType": relation_type
         }]
-
-    # def set_sort_hierarchy(self, hierarchy):
-    #     self.record["hierarchy"] = hierarchy
 
     def convert_date(self,date_input):
         supported_formats = ["%Y-%m-%d", "%d-%m-%Y", '%Y', "%Y/%m/%d %H:%M",
