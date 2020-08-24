@@ -176,12 +176,8 @@ class ExcelImporter:
                 detail={'keywordType':'theme','keyword':''}
                 raw_str = record[field_name]
                 for item in raw_str.split("|"):
-                    parts = item.split(':')
                     k, v = item.split(":",1)
                     k = k.replace(" ", "")
-                    # if k not in valid_keys:
-                    #     # print(k)
-                    #     raise RecordParseError("bad field: {}".format(item))
                     detail[k] = v.replace(";", "")
                 descriptive_keywords.append(detail)
                 if not append_mode:
@@ -197,7 +193,7 @@ class ExcelImporter:
                 for item in raw_str.split(","):
                     detail = {'keywordType': 'stratum', 'keyword': ''}
                     detail['keyword'] = item
-                    descriptive_keywords.append(detail)
+                descriptive_keywords.append(detail)
                 if not append_mode:
                     record['descriptiveKeywords'] = descriptive_keywords
                 else:
@@ -208,10 +204,13 @@ class ExcelImporter:
                 return
             else:
                 raw_str = record[field_name]
-                for item in raw_str.split(","):
-                    detail = {'keywordType': 'place', 'keyword': ''}
-                    detail['keyword'] = item
-                    descriptive_keywords.append(detail)
+                detail = {'keywordType': 'place', 'keyword': ''}
+                for item in raw_str.split("|"):
+                    k, v = item.split(":", 1)
+                    k = k.replace(" ", "")
+                    detail[k] = v.replace(";", "")
+                descriptive_keywords.append(detail)
+
                 if not append_mode:
                     record['descriptiveKeywords'] = descriptive_keywords
                 else:

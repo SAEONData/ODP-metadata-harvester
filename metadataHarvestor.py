@@ -52,8 +52,7 @@ class MetadataHarvest:
         builder.set_scope(imported_record['scope'])
         builder.set_status([imported_record['status']])
         builder.add_descriptiveKeywords(imported_record['descriptiveKeywords'])
-        builder.add_placeKeywords(imported_record['placeKeywords (CV)'])
-        builder.add_keywords(imported_record['keyword'])
+        #builder.add_keywords(imported_record['keyword']) #TODO:
         builder.set_constraints(imported_record['rights'],imported_record['rightsURI'],imported_record['accessConstraints'])
         builder.set_related_identifiers(imported_record['relatedIdentifiers'])
         builder.set_abstract(imported_record['abstract'])

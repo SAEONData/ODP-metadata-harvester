@@ -472,29 +472,6 @@ class SANS1878Builder(Builder):
             raise SANSSchemaFormatError("Invalid status type, must be a list")
         self.record["status"] = status
 
-
-    def add_placeKeywords(self, keywords):
-        if str(keywords) == 'nan':
-            return
-        else:
-            raw_str = record[field_name]
-            for item in raw_str.split(","):
-                detail = {'keywordType': 'place', 'keyword': ''}
-                detail['keyword'] = item
-                descriptive_keywords.append(detail)
-            if not append_mode:
-                record['descriptiveKeywords'] = descriptive_keywords
-            else:
-                record['descriptiveKeywords'] = record['descriptiveKeywords'] + descriptive_keywords
-
-        for word in keywords:
-            self.record["descriptiveKeywords"].append({
-                "keywordType": word['keywordType'].replace(' ', ''),
-                "keyword": word['keyword']
-            })
-
-
-
     def add_keywords(self, keywords):
         for word in keywords:
             self.record["descriptiveKeywords"].append({
@@ -512,8 +489,6 @@ class SANS1878Builder(Builder):
                     "keyword": word['keyword']
                 })
 
-
-
     def set_constraints(self, rights, rights_uri, access_constraints, use_constraints='', classification='',
                         use_limitations=''):
         if use_constraints != '' and type(use_constraints) != list:
@@ -526,12 +501,12 @@ class SANS1878Builder(Builder):
             "useConstraints": use_constraints,
             "classification": classification}]
 
-    def set_related_identifiers(self, identifier, id_type, relation_type):
-        self.record["relatedIdentifiers"] = [{
-            "relatedIdentifier": identifier,
-            "relatedIdentifierType": id_type,
-            "relationType": relation_type
-        }]
+    def set_related_identifiers(self,related_identifiers_array):
+        self.record["relatedIdentifiers"] = {
+            "relatedIdentifier": related_identifiers_array['relatedIdentifier'],
+            "relatedIdentifierType": related_identifiers_array['relatedIdentifierType'],
+            "relationType": related_identifiers_array['relationType']
+        }
 
     def convert_date(self,date_input):
         supported_formats = ["%Y-%m-%d", "%d-%m-%Y", '%Y', "%Y/%m/%d %H:%M",
