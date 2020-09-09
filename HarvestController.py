@@ -1,6 +1,7 @@
 import metadataHarvestor
 from odp.client import ODPClient
 from odp.exceptions import ODPException
+from dotenv import load_dotenv
 import pprint
 
 class HarvestController:
@@ -8,6 +9,7 @@ class HarvestController:
     def harvest_records(self):
         #Harvest records from a file and push them to a an API
         harvester = metadataHarvestor.MetadataHarvest()
+        load_dotenv()
         client = ODPClient()
         for record in harvester.get_records():
             try:
