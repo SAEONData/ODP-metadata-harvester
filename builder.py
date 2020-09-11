@@ -44,5 +44,25 @@ class builder:
     def build_datacite_json_record(self,imported_record):
         dataciteJSONrecord = DataCiteSchemaGenerator()
         dataciteJSONrecord.begin_record()
-        dataciteJSONrecord.set_identifier(imported_record['identifier'])
-        dataciteJSONrecord.add_creators(imported_record['creators'])
+        #dataciteJSONrecord.set_identifier(imported_record['DOI'])
+        #dataciteJSONrecord.set_title(title='This is the main title',subtitle='This is the subtitle') #TODO: Function before schema
+        dataciteJSONrecord.set_publisher(imported_record['responsibleParties'])
+        dataciteJSONrecord.set_publication_year(imported_record['date'])
+        #dataciteJSONrecord.set_subject() #TODO: Function before schema
+        #dataciteJSONrecord.set_contributor(imported_record['responsibleParties.1']) #TODO: Function before schema
+        #dataciteJSONrecord.add_creators(imported_record['responsibleParties']) #TODO: Function before schema
+        #dataciteJSONrecord.set_date(imported_record['date']) #TODO: Check with mark
+        dataciteJSONrecord.set_language()
+        dataciteJSONrecord.set_resource_type(imported_record['scope'])
+        #dataciteJSONrecord.add_alternateIdentifiers(imported_record['relatedIdentifiers']) #TODO: Function before schema
+        #dataciteJSONrecord.set_size('') #TODO: No input field
+        dataciteJSONrecord.set_format(imported_record['formatName'])
+        dataciteJSONrecord.set_version() #TODO: check what version this is refering to
+        #dataciteJSONrecord.set_rightsList(imported_record['rights'],imported_record['rightsURI']) #TODO: Check with Mark
+        dataciteJSONrecord.set_description(imported_record['abstract'])
+        #dataciteJSONrecord.set_geolocations(imported_record['boundingBox'],imported_record['placeKeywords (CV)'],imported_record['geographicIdentifier']) #TODO: Function before schema
+        #dataciteJSONrecord.set_fundingReference('') #TODO: No input field
+        #dataciteJSONrecord.set_immutableResource(imported_record['onlineResources']) #TODO: Check if this is the download link
+        #dataciteJSONrecord.set_linkedResources(imported_record['onlineResources']) #TODO: Check if this is supplementary info
+        return dataciteJSONrecord.record
+

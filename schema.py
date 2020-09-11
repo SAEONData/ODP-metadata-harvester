@@ -9,257 +9,256 @@ class Schema:
     def __init__(self):
         pass
 
-# class DataCiteSchemaGenerator(Schema):
+class DataCiteSchemaGenerator(Schema):
     #Create a DataCite JSON record
-    #     def begin_record(self):
-    #         self.record = []
+    def begin_record(self):
+        self.record = {}
+
+    def set_identifier(self, identifier):
+        self.record["identifier"] = {
+            "identifier": identifier,
+            "identifierType": "DOI"
+        }
+
+    def set_title(self,**kwargs):
+        print('lol')
+        if len(kwargs) == 1:
+            self.record["titles"] = [
+            {
+                "title": kwargs['title']
+            }]
+
+        elif len(kwargs) == 2:
+            self.record["titles"] = [{
+                "title": kwargs['title'],
+                "titleType": kwargs['subtitle']
+            }]
+        else:
+            raise dataciteSchemaFormatError
+
+    def set_publisher(self, publisher):
+        for party in publisher:
+            if party['role'] == 'publisher':
+                self.record["publisher"] = party['organizationName']
+
+
+    def set_publication_year(self, year):
+        self.record["publicationYear"] = year
+
+    # def add_creators(self, name, surname, affiliation, ORCHIDID):
+    #     self.record["creators"] = []
     #
-    #     def set_identifier(self, identifier):
-    #         self.record["identifier"] = {
-    #             "identifier": identifier,
-    #             "identifierType": "DOI"
+    #     self.record["creators"] =
+    #         {
+    #             "name": "surname, name",
+    #             "nameType": "Personal",
+    #             "givenName": name,
+    #             "familyName": surname,
+    #             "nameIdentifiers": [
+    #                 {
+    #                     "nameIdentifier": ORCHIDID,
+    #                     "nameIdentifierScheme": "ORCID",
+    #                     "schemeURI": "http://orcid.org/"
+    #                 }
+    #             ],
+    #             "affiliations": [
+    #                 {
+    #                     "affiliation": affiliation
+    #                 }
+    #             ]
     #         }
-    #
-    #     def set_title(self, title):
-    #         self.record["titles"] = [
-    #             {
-    #                 "title": title
-    #             }
-    #         ]
-    #         # TODO: Check if this is correct with mark
-    #
-    #     def set_publisher(self, publisher):
-    #         self.record["publisher"] = publisher
-    #
-    #     def set_publication_year(self, year):
-    #         self.record["publicationYear"] = year
-    #
-    #     def add_creators(self, name, surname, affiliation, ORCHIDID):
-    #         if type(name or surname or affiliation) != str:
-    #             raise dataciteSchemaFormatError("Invalid file_identifier, must be a string")
-    #         self.record["creators"] = [
-    #             {
-    #                 "name": "surname, name",
-    #                 "nameType": "Personal",
-    #                 "givenName": name,
-    #                 "familyName": surname,
-    #                 "nameIdentifiers": [
-    #                     {
-    #                         "nameIdentifier": ORCHIDID,
-    #                         "nameIdentifierScheme": "ORCID",
-    #                         "schemeURI": "http://orcid.org/"
-    #                     }
-    #                 ],
-    #                 "affiliations": [
-    #                     {
-    #                         "affiliation": affiliation
-    #                     }
-    #                 ]
-    #             }
-    #         ]
-    #
-    #     def add_subject(self, subject, subjectScheme, SchemeURI):
-    #         self.record["subjects"] = [
-    #             {
-    #                 "subject": subject,
-    #                 "subjectScheme": subjectScheme,
-    #                 "schemeURI": SchemeURI
-    #             }
-    #         ]
-    #
-    #     def add_contributor(self, name, surname, affiliation, contributortype, ORCHID):
-    #         self.record["contributors"] = [
-    #             {
-    #                 "contributorType": contributortype,
-    #                 "name": "{}, {}".format(surname, name),
-    #                 "givenName": name,
-    #                 "familyName": surname,
-    #                 "nameIdentifiers": [
-    #                     {
-    #                         "nameIdentifier": ORCHID,
-    #                         "nameIdentifierScheme": "ORCID",
-    #                         "schemeURI": "http://orcid.org/"
-    #                     }
-    #                 ],
-    #                 "affiliations": [
-    #                     {
-    #                         "affiliation": affiliation
-    #                     }
-    #                 ]
-    #             }
-    #         ]
-    #
-    #     # def set_dates(self,date,datetype,dateinformation):
-    #     #     self.record["dates"] = [
-    #     #         {
-    #     #             "date": date,
-    #     #             "dateType": datetype,
-    #     #             "dateInformation": dateinformation
-    #     #         }]
-    #
-    #     def set_dates(self):
-    #         self.record["dates"] = [
-    #             {
-    #                 "date": "2017-09-13",
-    #                 "dateType": "Updated",
-    #                 "dateInformation": "Updated with 4.2 properties"
-    #             },
-    #             {
-    #                 "date": "2018-09-21",
-    #                 "dateType": "Valid"
-    #             }
-    #         ]  # TODO: Ask mark why this is an array vs not just one
-    #
-    #     def set_language(self):
-    #         self.record["language"] = "en-US"
-    #
-    #     def set_resourceType(self, description, type):
-    #         self.record["resourceType"] = {
-    #             "resourceTypeGeneral": description,
-    #             "resourceType": type
+
+    def set_subject(self, subject, subjectScheme, SchemeURI):
+        self.record["subjects"] = [
+            {
+                "subject": subject,
+                "subjectScheme": subjectScheme,
+                "schemeURI": SchemeURI
+            }
+        ]
+
+    def set_contributor(self,contributors):
+        pass
+
+    # def add_contributor(self, name, surname, affiliation, contributortype, ORCHID):
+    #     self.record["contributors"] = [
+    #         {
+    #             "contributorType": contributortype,
+    #             "name": "{}, {}".format(surname, name),
+    #             "givenName": name,
+    #             "familyName": surname,
+    #             "nameIdentifiers": [
+    #                 {
+    #                     "nameIdentifier": ORCHID,
+    #                     "nameIdentifierScheme": "ORCID",
+    #                     "schemeURI": "http://orcid.org/"
+    #                 }
+    #             ],
+    #             "affiliations": [
+    #                 {
+    #                     "affiliation": affiliation
+    #                 }
+    #             ]
     #         }
-    #
-    #     def add_alternateIdentifiers(self, description, type):
-    #         self.record["alternateIdentifiers"] = [
+    #     ]
+
+    def set_date(self,date,datetype,dateinformation):
+        self.record["dates"] = [
+            {
+                "date": date,
+                "dateType": datetype,
+                "dateInformation": dateinformation
+            }]
+
+    def set_language(self):
+        self.record["language"] = "en-US"
+
+    def set_resource_type(self, type):
+        self.record["resourceType"] = {
+            "resourceTypeGeneral": 'TK' #TODO: Enquire to mark about this field
+            ,"resourceType": type
+        }
+
+    def add_alternateIdentifiers(self, description, type):
+        self.record["alternateIdentifiers"] = [
+            {
+                "alternateIdentifier": description,
+                "alternateIdentifierType": type
+            }
+        ]
+
+    # def add_relatedIdentifers(self,ID,relationType,relation):
+    #     if relationType == "IsMetadataFor" or relationType == "HasMetadata":
+    #         self.record["relatedIdentifiers"] = [
     #             {
-    #                 "alternateIdentifier": description,
-    #                 "alternateIdentifierType": type
+    #                 "relatedIdentifier": "https://data.datacite.org/application/citeproc+json/10.5072/example-full",
+    #                 "relatedIdentifierType": "URL",
+    #                 "relationType": "HasMetadata",
+    #                 "relatedMetadataScheme": "citeproc+json",
+    #                 "schemeURI": "https://github.com/citation-style-language/schema/raw/master/csl-data.json"
     #             }
     #         ]
-    #
-    #     # def add_relatedIdentifers(self,ID,relationType,relation):
-    #     #     if relationType == "IsMetadataFor" or relationType == "HasMetadata":
-    #     #         self.record["relatedIdentifiers"] = [
-    #     #             {
-    #     #                 "relatedIdentifier": "https://data.datacite.org/application/citeproc+json/10.5072/example-full",
-    #     #                 "relatedIdentifierType": "URL",
-    #     #                 "relationType": "HasMetadata",
-    #     #                 "relatedMetadataScheme": "citeproc+json",
-    #     #                 "schemeURI": "https://github.com/citation-style-language/schema/raw/master/csl-data.json"
-    #     #             }
-    #     #         ]
-    #     #     else:
-    #     #         self.record["relatedIdentifiers"] = [
-    #     #             {
-    #     #             "relatedIdentifier": "arXiv:0706.0001",
-    #     #             "relatedIdentifierType": "arXiv",
-    #     #             "relationType": "IsReviewedBy",
-    #     #             "resourceTypeGeneral": "Text"
-    #     #             }
-    #     #         ] #TODO: need to put the switch one level up so that inputs into the function are consistent across the cases
-    #
-    #     def set_size(self, datasize):
-    #         self.record["sizes"] = datasize
-    #
-    #     def set_format(self, dataformat):
-    #         self.record["formats"] = dataformat
-    #
-    #     def set_version(self):
-    #         self.record["version"] = "4.2"
-    #
-    #     def set_rightsList(self, rights, rightsURI, rightsIdentifier, rightsIdentifierScheme, schemeURI):
-    #         self.record["rightsList"] = [
+    #     else:
+    #         self.record["relatedIdentifiers"] = [
     #             {
-    #                 "rights": rights,
-    #                 "rightsURI": rightsURI,
-    #                 "rightsIdentifier": rightsIdentifier,
-    #                 "rightsIdentifierScheme": rightsIdentifierScheme,
-    #                 "schemeURI": schemeURI
+    #             "relatedIdentifier": "arXiv:0706.0001",
+    #             "relatedIdentifierType": "arXiv",
+    #             "relationType": "IsReviewedBy",
+    #             "resourceTypeGeneral": "Text"
     #             }
-    #         ]
-    #
-    #     def set_description(self, description):
-    #         self.record["descriptions"] = [
-    #             {
-    #                 "description": description,
-    #                 "descriptionType": "Abstract"
-    #             }
-    #         ]
-    #
-    #     def set_geolocations(self, longitude, latitude):
-    #         self.record["geoLocations"] = [
-    #             {
-    #                 "geoLocationPlace": "Atlantic Ocean",
-    #                 "geoLocationPoint": {
-    #                     "pointLongitude": "-67.302",
-    #                     "pointLatitude": "31.233"
-    #                 },
-    #                 "geoLocationBox": {
-    #                     "westBoundLongitude": "-71.032",
-    #                     "eastBoundLongitude": "-68.211",
-    #                     "southBoundLatitude": "41.090",
-    #                     "northBoundLatitude": "42.893"
-    #                 },
-    #                 "geoLocationPolygons": [
-    #                     {
-    #                         "polygonPoints": [
-    #                             {
-    #                                 "pointLatitude": "41.991",
-    #                                 "pointLongitude": "-71.032"
-    #                             },
-    #                             {
-    #                                 "pointLatitude": "42.893",
-    #                                 "pointLongitude": "-69.622"
-    #                             },
-    #                             {
-    #                                 "pointLatitude": "41.991",
-    #                                 "pointLongitude": "-68.211"
-    #                             },
-    #                             {
-    #                                 "pointLatitude": "41.090",
-    #                                 "pointLongitude": "-69.622"
-    #                             },
-    #                             {
-    #                                 "pointLatitude": "41.991",
-    #                                 "pointLongitude": "-71.032"
-    #                             }
-    #                         ]
-    #                     }
-    #                 ]
-    #             }
-    #         ]
-    #         # TODO: Chat with leo regarding the when to switch between the three
-    #
-    #     def set_fundingReference(self, name, identifier, funderidentifor, awardnumber, awardTitle):
-    #         self.record["fundingReferences"] = [
-    #             {
-    #                 "funderName": name,
-    #                 "funderIdentifier": identifier,
-    #                 "funderIdentifierType": funderidentifor,
-    #                 "awardNumber": awardnumber,
-    #                 "awardTitle": awardTitle
-    #             }
-    #         ]
-    #
-    #     def set_immutableResource(self, URL, checksum, algorithm, name, description):
-    #         self.record["immutableResource"] = {
-    #             "resourceURL": URL,
-    #             "resourceChecksum": checksum,
-    #             "checksumAlgorithm": algorithm,
-    #             "resourceName": name,
-    #             "resourceDescription": description
-    #         }
-    #
-    #     def set_linkedResources(self, resourcetype, resourceURL, resourceName, resourceDescription):
-    #         self.record["linkedResources"] = [
-    #             {
-    #                 "linkedResourceType": resourcetype,
-    #                 "resourceURL": resourceURL,
-    #                 "resourceName": resourceName,
-    #                 "resourceDescription": resourceDescription
-    #             }
-    #         ]
-    #     # def set_originalMetadata(self,):
-    #     #     self.record"originalMetadata": "<?xml version=\"1.0\"?><resource>...the original metadata...</resource>"
-    #     # TODO: check with mark about this field
-    #
-    #     def end_record(self):
-    #         built_record = self.record
-    #         return built_record
-    #
-    # # datacite=dataciteSchemaGenerator()
-    # # datacite.add_contributor("kyle","Cooper","SAEON","publisher","0000-0002-7285-027X")
-    # # pprint(datacite.record)
+    #         ] #TODO: need to put the switch one level up so that inputs into the function are consistent across the cases
+
+    def set_size(self, datasize):
+        self.record["sizes"] = datasize #TODO: Because this is a list, check if it's one value
+
+    def set_format(self, dataformat):
+        self.record["formats"] = dataformat
+
+    def set_version(self):
+        self.record["version"] = "4.2"
+
+    def set_rightsList(self, rights, rightsURI, rightsIdentifier, rightsIdentifierScheme, schemeURI):
+        self.record["rightsList"] = [
+            {
+                "rights": rights,
+                "rightsURI": rightsURI,
+                "rightsIdentifier": rightsIdentifier, #TODO: Check this field with mark
+                "rightsIdentifierScheme": rightsIdentifierScheme, #TODO: Check this field with mark
+                "schemeURI": schemeURI #TODO: Check this field with mark
+            }
+        ]
+
+    def set_description(self, description):
+        self.record["descriptions"] = [
+            {
+                "description": description,
+                "descriptionType": "Abstract"
+            }
+        ]
+
+    def set_geolocations(self, longitude, latitude):
+        self.record["geoLocations"] = [
+            {
+                "geoLocationPlace": "Atlantic Ocean",
+                "geoLocationPoint": {
+                    "pointLongitude": "-67.302",
+                    "pointLatitude": "31.233"
+                },
+                "geoLocationBox": {
+                    "westBoundLongitude": "-71.032",
+                    "eastBoundLongitude": "-68.211",
+                    "southBoundLatitude": "41.090",
+                    "northBoundLatitude": "42.893"
+                },
+                "geoLocationPolygons": [
+                    {
+                        "polygonPoints": [
+                            {
+                                "pointLatitude": "41.991",
+                                "pointLongitude": "-71.032"
+                            },
+                            {
+                                "pointLatitude": "42.893",
+                                "pointLongitude": "-69.622"
+                            },
+                            {
+                                "pointLatitude": "41.991",
+                                "pointLongitude": "-68.211"
+                            },
+                            {
+                                "pointLatitude": "41.090",
+                                "pointLongitude": "-69.622"
+                            },
+                            {
+                                "pointLatitude": "41.991",
+                                "pointLongitude": "-71.032"
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+        # TODO: Chat with leo regarding the when to switch between the three
+
+    def set_fundingReference(self, name, identifier, funderidentifor, awardnumber, awardTitle):
+        self.record["fundingReferences"] = [
+            {
+                "funderName": name,
+                "funderIdentifier": identifier,
+                "funderIdentifierType": funderidentifor,
+                "awardNumber": awardnumber,
+                "awardTitle": awardTitle
+            }
+        ]
+
+    def set_immutableResource(self, URL, checksum, algorithm, name, description):
+        self.record["immutableResource"] = {
+            "resourceURL": URL,
+            "resourceChecksum": checksum,
+            "checksumAlgorithm": algorithm,
+            "resourceName": name,
+            "resourceDescription": description
+        }
+
+    def set_linkedResources(self, resourcetype, resourceURL, resourceName, resourceDescription):
+        self.record["linkedResources"] = [
+            {
+                "linkedResourceType": resourcetype,
+                "resourceURL": resourceURL,
+                "resourceName": resourceName,
+                "resourceDescription": resourceDescription
+            }
+        ]
+    # def set_originalMetadata(self,):
+    #     self.record"originalMetadata": "<?xml version=\"1.0\"?><resource>...the original metadata...</resource>"
+    # TODO: check with mark about this field
+
+    def get_filled_schema(self):
+        return self.record
+
+    # datacite=dataciteSchemaGenerator()
+    # datacite.add_contributor("kyle","Cooper","SAEON","publisher","0000-0002-7285-027X")
+    # pprint(datacite.record)
 
 class SANS1878SchemaGenerator(Schema):
     #Create a SANS1878 JSON record

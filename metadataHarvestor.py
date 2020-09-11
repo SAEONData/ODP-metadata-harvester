@@ -27,7 +27,7 @@ class MetadataHarvest:
     def get_next_record(self):
         #Returns a list of JSON records from a file
         importer = metadataimporter.MetadataImport()
-        imported_records = importer.create_importer(filename='excel_sheets/T_Lamont_PEI_Bulk_data_submission.xlsx')
+        imported_records = importer.create_importer(filename='excel_sheets/ODP_metadata_example.xlsx')
         return imported_records
         # implement in concrete importer class
         #raise NotImplementedError
