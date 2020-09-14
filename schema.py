@@ -20,21 +20,12 @@ class DataCiteSchemaGenerator(Schema):
             "identifierType": "DOI"
         }
 
-    def set_title(self,**kwargs):
-        print('lol')
-        if len(kwargs) == 1:
-            self.record["titles"] = [
-            {
-                "title": kwargs['title']
-            }]
+    def set_title(self,title):
+        self.record["titles"] = [
+        {
+            "title": title
+        }]
 
-        elif len(kwargs) == 2:
-            self.record["titles"] = [{
-                "title": kwargs['title'],
-                "titleType": kwargs['subtitle']
-            }]
-        else:
-            raise dataciteSchemaFormatError
 
     def set_publisher(self, publisher):
         for party in publisher:
@@ -68,14 +59,11 @@ class DataCiteSchemaGenerator(Schema):
     #             ]
     #         }
 
-    def set_subject(self, subject, subjectScheme, SchemeURI):
-        self.record["subjects"] = [
-            {
+    def set_subject(self, subject, subjectScheme):
+        return {
                 "subject": subject,
-                "subjectScheme": subjectScheme,
-                "schemeURI": SchemeURI
+                "subjectScheme": subjectScheme
             }
-        ]
 
     def set_contributor(self,contributors):
         pass
