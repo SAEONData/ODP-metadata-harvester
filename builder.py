@@ -48,10 +48,12 @@ class builder:
         dataciteJSONrecord.set_title(imported_record['title'])
         dataciteJSONrecord.set_publisher(imported_record['responsibleParties'])
         dataciteJSONrecord.set_publication_year(imported_record['date'])
-        #dataciteJSONrecord.set_subject() #TODO: Function before schema
+        dataciteJSONrecord.record['subjects'] = []
+        for word in imported_record['keyword']:
+            dataciteJSONrecord.record['subjects'].append(dataciteJSONrecord.set_subject(word,'general'))
         #dataciteJSONrecord.set_contributor(imported_record['responsibleParties.1']) #TODO: Function before schema
         #dataciteJSONrecord.add_creators(imported_record['responsibleParties']) #TODO: Function before schema
-        #dataciteJSONrecord.set_date(imported_record['date']) #TODO: Check with mark
+        #dataciteJSONrecord.set_date(imported_record['date']) #TODO: This is for the temporal range and datetype must be "valid"
         dataciteJSONrecord.set_language()
         dataciteJSONrecord.set_resource_type(imported_record['scope'])
         #dataciteJSONrecord.add_alternateIdentifiers(imported_record['relatedIdentifiers']) #TODO: This is for any other type of identifier than a DOI Function before schema
