@@ -1,16 +1,21 @@
 from datetime import datetime
+
+
 class SANSSchemaFormatError(Exception):
     pass
 
-class dataciteSchemaFormatError(Exception):
+
+class dataCiteSchemaFormatError(Exception):
     pass
+
 
 class Schema:
     def __init__(self):
         pass
 
+
 class DataCiteSchemaGenerator(Schema):
-    #Create a DataCite JSON record
+    # Create a DataCite JSON record
     def begin_record(self):
         self.record = {}
 
@@ -20,53 +25,56 @@ class DataCiteSchemaGenerator(Schema):
             "identifierType": "DOI"
         }
 
-    def set_title(self,title):
+    def set_title(self, title):
         self.record["titles"] = [
-        {
-            "title": title
-        }]
-
+            {
+                "title": title
+            }]
 
     def set_publisher(self, publisher):
         for party in publisher:
             if party['role'] == 'publisher':
                 self.record["publisher"] = party['organizationName']
 
-
     def set_publication_year(self, year):
         self.record["publicationYear"] = year
 
-    # def add_creators(self, name, surname, affiliation, ORCHIDID):
-    #     self.record["creators"] = []
-    #
-    #     self.record["creators"] =
-    #         {
-    #             "name": "surname, name",
-    #             "nameType": "Personal",
-    #             "givenName": name,
-    #             "familyName": surname,
-    #             "nameIdentifiers": [
-    #                 {
-    #                     "nameIdentifier": ORCHIDID,
-    #                     "nameIdentifierScheme": "ORCID",
-    #                     "schemeURI": "http://orcid.org/"
-    #                 }
-    #             ],
-    #             "affiliations": [
-    #                 {
-    #                     "affiliation": affiliation
-    #                 }
-    #             ]
-    #         }
+    def set_creators(self, creator):
+        return {
+            "name": creator['individualName'],
+            "affiliations": [
+                {
+                    "affiliation": creator['organizationName']
+                }
+            ]
+        }
 
     def set_subject(self, subject, subjectScheme):
         return {
-                "subject": subject,
-                "subjectScheme": subjectScheme
-            }
+            "subject": subject,
+            "subjectScheme": subjectScheme
+        }
 
-    def set_contributor(self,contributors):
-        pass
+    def set_contributor(self, contributors):
+        return {
+            "contributorType": contributors['role'],
+            "name": contributors['individualName'],
+            "affiliations": [
+                {
+                    "affiliation": contributors['organizationName']
+                }
+            ]
+        }
+
+    def convert_date(self, date_input):
+        supported_formats = ["%Y-%m-%d", "%d-%m-%Y", '%Y', "%Y/%m/%d %H:%M",
+                             "%Y-%m-%d %H:%M:%S"]  # 2015/03/12 12:00
+        for fmt in supported_formats:
+            try:
+                return datetime.strptime(str(date_input), fmt)
+            except ValueError:
+                pass
+        raise ValueError('no valid date format found record')
 
     # def add_contributor(self, name, surname, affiliation, contributortype, ORCHID):
     #     self.record["contributors"] = [

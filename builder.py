@@ -51,9 +51,13 @@ class builder:
         dataciteJSONrecord.record['subjects'] = []
         for word in imported_record['keyword']:
             dataciteJSONrecord.record['subjects'].append(dataciteJSONrecord.set_subject(word,'general'))
-        #dataciteJSONrecord.set_contributor(imported_record['responsibleParties.1']) #TODO: Function before schema
-        #dataciteJSONrecord.add_creators(imported_record['responsibleParties']) #TODO: Function before schema
-        #dataciteJSONrecord.set_date(imported_record['date']) #TODO: This is for the temporal range and datetype must be "valid"
+        dataciteJSONrecord.record['contributors'] = []
+        for person in imported_record['responsibleParties.1']:
+            dataciteJSONrecord.record['contributors'].append(dataciteJSONrecord.set_contributor(person))
+        dataciteJSONrecord.record['creators'] = []
+        for person in imported_record['responsibleParties']:
+            dataciteJSONrecord.record['creators'].append(dataciteJSONrecord.set_creators(person))
+        #dataciteJSONrecord.set_date(imported_record['startTime']) #TODO: date functions need to be applicable across schemas
         dataciteJSONrecord.set_language()
         dataciteJSONrecord.set_resource_type(imported_record['scope'])
         #dataciteJSONrecord.add_alternateIdentifiers(imported_record['relatedIdentifiers']) #TODO: This is for any other type of identifier than a DOI Function before schema
@@ -64,7 +68,8 @@ class builder:
         dataciteJSONrecord.set_description(imported_record['abstract'])
         #dataciteJSONrecord.set_geolocations(imported_record['boundingBox'],imported_record['placeKeywords (CV)'],imported_record['geographicIdentifier']) #TODO: Function before schema
         #dataciteJSONrecord.set_fundingReference('') #TODO: No input field
-        #dataciteJSONrecord.set_immutableResource(imported_record['onlineResources']) #TODO: This is the download link
-        #dataciteJSONrecord.set_linkedResources(imported_record['onlineResources']) #TODO: This is supplementary info
+        dataciteJSONrecord.set_immutableResource(imported_record['onlineResources'])
+        dataciteJSONrecord.record['linkedResources'] = []
+        #dataciteJSONrecord.set_linkedResources(imported_record['onlineResources']) #TODO: No input field (This is supplementary info)
         return dataciteJSONrecord.record
 
