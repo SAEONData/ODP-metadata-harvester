@@ -123,8 +123,8 @@ class DataCiteSchemaGenerator(Schema):
     def set_format(self, dataformat):
         self.record["formats"] = dataformat
 
-    def set_version(self):
-        self.record["version"] = "4.2"
+    def set_version(self,version):
+        self.record["version"] = version
 
     def set_rightsList(self, rights, rightsURI):
         self.record["rightsList"] = [
@@ -187,11 +187,9 @@ class DataCiteSchemaGenerator(Schema):
         # TODO: Chat with leo regarding the when to switch between the three
 
     def set_fundingReference(self, name):
-        self.record["fundingReferences"] = [
-            {
+        self.record["fundingReferences"] = {
                 "funderName": name
             }
-        ]
 
     def set_immutableResource(self, resource):
         for res in resource:

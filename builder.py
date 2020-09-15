@@ -60,44 +60,47 @@ class builder:
         dataciteJSONrecord.set_description(imported_record['abstract'])
         dataciteJSONrecord.record["dates"] = []
         dataciteJSONrecord.record['alternateIdentifiers'] = []
-        for identifier in imported_record['alternateIdentifiers']:
-            dataciteJSONrecord.set_alternateIdentifiers(imported_record['alternateIdentifiers'])
-        #"alternateIdentifiers"
+        # for identifier in imported_record['alternateIdentifiers']:
+        #     dataciteJSONrecord.set_alternateIdentifiers(imported_record['alternateIdentifiers'])
 
         #optional fields
         dataciteJSONrecord.set_identifier(imported_record['DOI'])
+        dataciteJSONrecord.set_language()
+
         dataciteJSONrecord.record['contributors'] = []
         for person in imported_record['responsibleParties.1']:
             dataciteJSONrecord.record['contributors'].append(dataciteJSONrecord.set_contributor(person))
-        dataciteJSONrecord.record['creators'] = []
-        for person in imported_record['responsibleParties']:
-            dataciteJSONrecord.record['creators'].append(dataciteJSONrecord.set_creators(person))
-        #dataciteJSONrecord.set_date(imported_record['startTime']) #TODO: date functions need to be applicable across schemas
-        dataciteJSONrecord.set_language()
 
-        if imported_record['fundingReference']:
+        # if imported_record['startTime'] & imported_record['endTime']:
+        #     pass
+        # else:
+        #     dataciteJSONrecord.set_date(self.convert_date(imported_record['startTime']),
+        #                                 self.convert_date(imported_record['endTime'])) #TODO: date functions need to be applicable across schemas
+        #
+        if imported_record['fundingReferences']:
             pass
         else:
-            dataciteJSONrecord.set_fundingReference(imported_record['fundingReference'])
-
-        if imported_record['alternateIdentifiers']:
-            pass
-        else:
-             #TODO: This is for any other type of identifier (No input field)
+            dataciteJSONrecord.record["fundingReferences"] = []
+            dataciteJSONrecord.set_fundingReference(imported_record['fundingReferences'])
 
         if imported_record['size']:
             pass
         else:
-            dataciteJSONrecord.set_size(imported_record['size']) #TODO: No input field
+            dataciteJSONrecord.set_size(imported_record['size'])
 
-        dataciteJSONrecord.set_format(imported_record['formatName'])
-        #dataciteJSONrecord.set_version() #TODO: No input field (This is the dataset version)
-        dataciteJSONrecord.set_rightsList(imported_record['rights'],imported_record['rightsURI'])
-        dataciteJSONrecord.set_description(imported_record['abstract'])
+        if imported_record['formatName']:
+            pass
+        else:
+            dataciteJSONrecord.set_format(imported_record['formatName'])
+
+        # if imported_record['datasetVersion']:
+        #     pass
+        # else:
+        #     dataciteJSONrecord.set_version(imported_record['datasetVersion'])
+
         #dataciteJSONrecord.set_geolocations(imported_record['boundingBox'],imported_record['placeKeywords (CV)'],imported_record['geographicIdentifier']) #TODO: Function before schema
-        #dataciteJSONrecord.set_fundingReference('') #TODO: No input field
-        dataciteJSONrecord.set_immutableResource(imported_record['onlineResources'])
-        dataciteJSONrecord.record['linkedResources'] = []
+        #dataciteJSONrecord.set_immutableResource(imported_record['onlineResources'])
+        #dataciteJSONrecord.record['linkedResources'] = []
         #dataciteJSONrecord.set_linkedResources(imported_record['onlineResources']) #TODO: No input field (This is supplementary info)
         return dataciteJSONrecord.record
 
