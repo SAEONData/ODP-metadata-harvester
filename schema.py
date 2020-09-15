@@ -76,34 +76,14 @@ class DataCiteSchemaGenerator(Schema):
                 pass
         raise ValueError('no valid date format found record')
 
-    # def add_contributor(self, name, surname, affiliation, contributortype, ORCHID):
-    #     self.record["contributors"] = [
-    #         {
-    #             "contributorType": contributortype,
-    #             "name": "{}, {}".format(surname, name),
-    #             "givenName": name,
-    #             "familyName": surname,
-    #             "nameIdentifiers": [
-    #                 {
-    #                     "nameIdentifier": ORCHID,
-    #                     "nameIdentifierScheme": "ORCID",
-    #                     "schemeURI": "http://orcid.org/"
-    #                 }
-    #             ],
-    #             "affiliations": [
-    #                 {
-    #                     "affiliation": affiliation
-    #                 }
-    #             ]
-    #         }
-    #     ]
-
-    def set_date(self,date,datetype,dateinformation):
+    def set_date(self, start_date, end_date):
+        timestamp = self.convert_date(start_date)
+        format = "%Y-%m-%d"
+        timestamp_str = timestamp.strftime(format)
         self.record["dates"] = [
             {
-                "date": date,
-                "dateType": datetype,
-                "dateInformation": dateinformation
+                "date": timestamp_str + '/',
+                "dateType": 'Valid'
             }]
 
     def set_language(self):
@@ -111,17 +91,15 @@ class DataCiteSchemaGenerator(Schema):
 
     def set_resource_type(self, type):
         self.record["resourceType"] = {
-            "resourceTypeGeneral": 'TK' #TODO: Enquire to mark about this field
-            ,"resourceType": type
+            "resourceTypeGeneral": 'TK'  # TODO: Enquire to mark about this field
+            , "resourceType": type
         }
 
-    def add_alternateIdentifiers(self, description, type):
-        self.record["alternateIdentifiers"] = [
-            {
-                "alternateIdentifier": description,
-                "alternateIdentifierType": type
-            }
-        ]
+    def set_alternateIdentifiers(self, description, type):
+        self.record["alternateIdentifiers"] = {
+            "alternateIdentifier": description,
+            "alternateIdentifierType": type
+        }
 
     # def add_relatedIdentifers(self,ID,relationType,relation):
     #     if relationType == "IsMetadataFor" or relationType == "HasMetadata":
@@ -145,7 +123,7 @@ class DataCiteSchemaGenerator(Schema):
     #         ] #TODO: need to put the switch one level up so that inputs into the function are consistent across the cases
 
     def set_size(self, datasize):
-        self.record["sizes"] = datasize #TODO: Because this is a list, check if it's one value
+        self.record["sizes"] = datasize  # TODO: Because this is a list, check if it's one value
 
     def set_format(self, dataformat):
         self.record["formats"] = dataformat
@@ -153,14 +131,11 @@ class DataCiteSchemaGenerator(Schema):
     def set_version(self):
         self.record["version"] = "4.2"
 
-    def set_rightsList(self, rights, rightsURI, rightsIdentifier, rightsIdentifierScheme, schemeURI):
+    def set_rightsList(self, rights, rightsURI):
         self.record["rightsList"] = [
             {
                 "rights": rights,
-                "rightsURI": rightsURI,
-                "rightsIdentifier": rightsIdentifier, #TODO: Check this field with mark
-                "rightsIdentifierScheme": rightsIdentifierScheme, #TODO: Check this field with mark
-                "schemeURI": schemeURI #TODO: Check this field with mark
+                "rightsURI": rightsURI
             }
         ]
 
@@ -227,24 +202,22 @@ class DataCiteSchemaGenerator(Schema):
             }
         ]
 
-    def set_immutableResource(self, URL, checksum, algorithm, name, description):
-        self.record["immutableResource"] = {
-            "resourceURL": URL,
-            "resourceChecksum": checksum,
-            "checksumAlgorithm": algorithm,
-            "resourceName": name,
-            "resourceDescription": description
-        }
+    def set_immutableResource(self, resource):
+        for res in resource:
+            self.record["immutableResource"] = {
+                "resourceURL": res['linkage'],
+                "resourceName": res['description'],
+                "resourceDescription": res['name']
+            }
 
     def set_linkedResources(self, resourcetype, resourceURL, resourceName, resourceDescription):
-        self.record["linkedResources"] = [
-            {
-                "linkedResourceType": resourcetype,
-                "resourceURL": resourceURL,
-                "resourceName": resourceName,
-                "resourceDescription": resourceDescription
-            }
-        ]
+        self.record["linkedResources"] = {
+            "linkedResourceType": resourcetype,
+            "resourceURL": resourceURL,
+            "resourceName": resourceName,
+            "resourceDescription": resourceDescription
+        }
+
     # def set_originalMetadata(self,):
     #     self.record"originalMetadata": "<?xml version=\"1.0\"?><resource>...the original metadata...</resource>"
     # TODO: check with mark about this field
@@ -256,13 +229,14 @@ class DataCiteSchemaGenerator(Schema):
     # datacite.add_contributor("kyle","Cooper","SAEON","publisher","0000-0002-7285-027X")
     # pprint(datacite.record)
 
+
 class SANS1878SchemaGenerator(Schema):
-    #Create a SANS1878 JSON record
+    # Create a SANS1878 JSON record
     def __init__(self):
         pass
 
     def begin_record(self):
-        #Create an empty SANS1878 record
+        # Create an empty SANS1878 record
         self.record = {}
         self.record["responsibleParties"] = []
         self.record["extent"] = {
@@ -315,12 +289,8 @@ class SANS1878SchemaGenerator(Schema):
             if len(rparty['email']) > 0:
                 contactInfo = contactInfo + "," + rparty['email']
             self.add_responsible_party("%r" % rparty['individualName'], rparty['organizationName'],
-                                                   contactInfo, role_fixes[rparty['role'].lower()],
-                                                   rparty['positionName'])  # , online_resource)
-
-
-
-
+                                       contactInfo, role_fixes[rparty['role'].lower()],
+                                       rparty['positionName'])  # , online_resource)
 
     def set_geographic_identifier(self, identifier):
         if str(identifier) == 'nan':
@@ -337,7 +307,7 @@ class SANS1878SchemaGenerator(Schema):
         }
         self.record["extent"]["geographicElements"][0]["boundingBox"] = box
 
-    def add_bounding_polygon(self,polygon):
+    def add_bounding_polygon(self, polygon):
         if type(polygon) != list or len(polygon) < 5:
             raise SANSSchemaFormatError("Invalid polygon type, must be a list with 5 elements")
 
@@ -408,8 +378,8 @@ class SANS1878SchemaGenerator(Schema):
             self.record["spatialRepresentationTypes"] = ''
         else:
             rep_type_fixes = {'': '', 'vector': 'vector', 'grid': 'grid', \
-                          'texttable': 'textTable', 'tin': 'tin', 'stereomodel': 'stereoModel', \
-                          'video': 'video', 'image': 'image'}
+                              'texttable': 'textTable', 'tin': 'tin', 'stereomodel': 'stereoModel', \
+                              'video': 'video', 'image': 'image'}
             self.record["spatialRepresentationTypes"] = [rep_type_fixes[represenation.lower()]]
 
     def set_reference_system_name(self, reference):
@@ -421,7 +391,7 @@ class SANS1878SchemaGenerator(Schema):
     def add_online_resources(self, onlineResources):
         for resource in onlineResources:
             if str(resource) == 'nan':
-                self.record["onlineResources"] =''
+                self.record["onlineResources"] = ''
             else:
                 online_resource = {
                     "name": resource['name'],
@@ -496,7 +466,7 @@ class SANS1878SchemaGenerator(Schema):
             "useConstraints": use_constraints,
             "classification": classification}]
 
-    def set_related_identifiers(self,related_identifiers_array):
+    def set_related_identifiers(self, related_identifiers_array):
         self.record["relatedIdentifiers"] = {
             "relatedIdentifier": related_identifiers_array['relatedIdentifier'],
             "relatedIdentifierType": related_identifiers_array['relatedIdentifierType'],

@@ -41,10 +41,10 @@ class builder:
         sansJSONrecord.set_abstract(imported_record['abstract'])
         return sansJSONrecord.record
 
-    def build_datacite_json_record(self,imported_record):
+    def build_datacite_json_record(self,imported_record): #TODO: put in a control for non required fields
         dataciteJSONrecord = DataCiteSchemaGenerator()
         dataciteJSONrecord.begin_record()
-        #dataciteJSONrecord.set_identifier(imported_record['DOI'])
+        dataciteJSONrecord.set_identifier(imported_record['DOI'])
         dataciteJSONrecord.set_title(imported_record['title'])
         dataciteJSONrecord.set_publisher(imported_record['responsibleParties'])
         dataciteJSONrecord.set_publication_year(imported_record['date'])
@@ -60,11 +60,12 @@ class builder:
         #dataciteJSONrecord.set_date(imported_record['startTime']) #TODO: date functions need to be applicable across schemas
         dataciteJSONrecord.set_language()
         dataciteJSONrecord.set_resource_type(imported_record['scope'])
-        #dataciteJSONrecord.add_alternateIdentifiers(imported_record['relatedIdentifiers']) #TODO: This is for any other type of identifier than a DOI Function before schema
+        dataciteJSONrecord.record['alternateIdentifiers'] = []
+        #dataciteJSONrecord.set_alternateIdentifiers() #TODO: This is for any other type of identifier (No input field)
         #dataciteJSONrecord.set_size('') #TODO: No input field
         dataciteJSONrecord.set_format(imported_record['formatName'])
-        dataciteJSONrecord.set_version() #TODO: This is the dataset version
-        #dataciteJSONrecord.set_rightsList(imported_record['rights'],imported_record['rightsURI']) #TODO: Double check with Leo about the additional rights field
+        #dataciteJSONrecord.set_version() #TODO: No input field (This is the dataset version)
+        dataciteJSONrecord.set_rightsList(imported_record['rights'],imported_record['rightsURI'])
         dataciteJSONrecord.set_description(imported_record['abstract'])
         #dataciteJSONrecord.set_geolocations(imported_record['boundingBox'],imported_record['placeKeywords (CV)'],imported_record['geographicIdentifier']) #TODO: Function before schema
         #dataciteJSONrecord.set_fundingReference('') #TODO: No input field
