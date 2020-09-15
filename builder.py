@@ -93,10 +93,10 @@ class builder:
         else:
             dataciteJSONrecord.set_format(imported_record['formatName'])
 
-        # if imported_record['datasetVersion']:
-        #     pass
-        # else:
-        #     dataciteJSONrecord.set_version(imported_record['datasetVersion'])
+        if imported_record['datasetVersion']:
+            pass
+        else:
+            dataciteJSONrecord.set_version(imported_record['datasetVersion'])
 
         #dataciteJSONrecord.set_geolocations(imported_record['boundingBox'],imported_record['placeKeywords (CV)'],imported_record['geographicIdentifier']) #TODO: Function before schema
         #dataciteJSONrecord.set_immutableResource(imported_record['onlineResources'])
