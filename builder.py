@@ -11,7 +11,7 @@ class builder:
         sansJSONrecord.set_title(imported_record['title'])
         sansJSONrecord.set_date(imported_record['date'])
         sansJSONrecord.set_file_identifier(str(imported_record['fileIdentifier']))
-        sansJSONrecord.set_responsible_party(imported_record['responsibleParties'])
+        sansJSONrecord.set_responsible_party(imported_record['responsibleParties']) #TODO: implement new imported structure of responsible parties
         sansJSONrecord.set_geographic_identifier(str(imported_record['geographicIdentifier']))
         sansJSONrecord.set_bounding_box_extent(imported_record['boundingBox'])
         sansJSONrecord.set_vertical_extent(imported_record['verticalElement'])

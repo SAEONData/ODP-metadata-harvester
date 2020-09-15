@@ -48,8 +48,8 @@ class ExcelImporter:
         # parse where necessary
         self.parse_file_identifier(record)
         self.parse_responsible_parties(record, 'responsibleParties')
-        self.parse_responsible_parties(record, 'responsibleParties.1',True)
-        self.parse_responsible_parties(record, 'responsibleParties.Publisher',True)
+        self.parse_responsible_parties(record, 'responsibleParties.1')
+        self.parse_responsible_parties(record, 'responsibleParties.Publisher')
 
         self.parse_column_list(record, 'keyword')
         self.parse_column_list(record, 'topicCategories')
@@ -70,7 +70,7 @@ class ExcelImporter:
         if type(record['fileIdentifier']) == float:
             record['fileIdentifier'] = str(int(record['fileIdentifier'].strip()))
 
-    def parse_responsible_parties(self, record, field, append_mode=False):
+    def parse_responsible_parties(self, record, field):
         valid_keys = ['individualName','organizationName','positionName','contactInfo','role','email']
         responsible_parties = []
         try:
@@ -111,11 +111,7 @@ class ExcelImporter:
             raise RecordParseError("Invalid responible party - {}".format(e))
         except Exception as e:
             raise RecordParseError("Invalid responible party - {}".format(item))
-
-        if not append_mode:
-            record['responsibleParties'] = responsible_parties
-        else:
-            record['responsibleParties'] = record['responsibleParties'] + responsible_parties
+        record[field] = responsible_parties
 
     def parse_online_resources(self, record, field):
         if str(record[field]) == 'nan':
