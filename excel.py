@@ -13,7 +13,7 @@ class ExcelImporter:
          'responsibleParties.1','responsibleParties.Publisher','keyword','instrumentKeywords (CV)','status','topicCategories', 'abstract',
          'languages', 'formatName', 'spatialRepresentationType', 'spatialResolution', 'referenceSystemName', 'scope',
          'geographicIdentifier','placeKeywords (CV)', 'boundingBox', 'verticalElement', 'startTime', 'endTime', 'rights',
-         'rightsURI', 'lineageStatement', 'onlineResources', 'relatedIdentifiers']
+         'rightsURI', 'lineageStatement', 'onlineResources', 'relatedIdentifiers','size']
 
     def __init__(self):
         pass
@@ -65,6 +65,7 @@ class ExcelImporter:
                                        ['northBoundLatitude', 'southBoundLatitude',
                                        'eastBoundLongitude', 'westBoundLongitude'],True)
         self.parse_field_to_dict(record,'verticalElement',['minimumValue','maximumValue','unitOfMeasure', 'verticalDatum'],True)
+        self.parse_column_list(record,'size')
 
     def parse_file_identifier(self, record):
         if type(record['fileIdentifier']) == float:

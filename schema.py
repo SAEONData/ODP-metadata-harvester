@@ -16,8 +16,6 @@ class Schema:
 
 class DataCiteSchemaGenerator(Schema):
     # Create a DataCite JSON record
-    def begin_record(self):
-        self.record = {}
 
     def set_identifier(self, identifier):
         self.record["identifier"] = {
@@ -76,15 +74,12 @@ class DataCiteSchemaGenerator(Schema):
                 pass
         raise ValueError('no valid date format found record')
 
-    def set_date(self, start_date, end_date):
-        timestamp = self.convert_date(start_date)
-        format = "%Y-%m-%d"
-        timestamp_str = timestamp.strftime(format)
-        self.record["dates"] = [
-            {
+    def set_start_date(self, start_date):
+        timestamp_str = start_date.strftime("%Y-%m-%d")
+        self.record["dates"] = {
                 "date": timestamp_str + '/',
                 "dateType": 'Valid'
-            }]
+            }
 
     def set_language(self):
         self.record["language"] = "en-US"
@@ -191,14 +186,10 @@ class DataCiteSchemaGenerator(Schema):
         ]
         # TODO: Chat with leo regarding the when to switch between the three
 
-    def set_fundingReference(self, name, identifier, funderidentifor, awardnumber, awardTitle):
+    def set_fundingReference(self, name):
         self.record["fundingReferences"] = [
             {
-                "funderName": name,
-                "funderIdentifier": identifier,
-                "funderIdentifierType": funderidentifor,
-                "awardNumber": awardnumber,
-                "awardTitle": awardTitle
+                "funderName": name
             }
         ]
 
@@ -473,7 +464,7 @@ class SANS1878SchemaGenerator(Schema):
             "relationType": related_identifiers_array['relationType']
         }
 
-    def convert_date(self,date_input):
+    def convert_date(self, date_input):
         supported_formats = ["%Y-%m-%d", "%d-%m-%Y", '%Y', "%Y/%m/%d %H:%M",
                              "%Y-%m-%d %H:%M:%S"]  # 2015/03/12 12:00
         for fmt in supported_formats:

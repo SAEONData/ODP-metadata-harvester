@@ -43,14 +43,29 @@ class builder:
 
     def build_datacite_json_record(self,imported_record): #TODO: put in a control for non required fields
         dataciteJSONrecord = DataCiteSchemaGenerator()
-        dataciteJSONrecord.begin_record()
-        dataciteJSONrecord.set_identifier(imported_record['DOI'])
+        dataciteJSONrecord.record = {}
+
+        #required fields
         dataciteJSONrecord.set_title(imported_record['title'])
         dataciteJSONrecord.set_publisher(imported_record['responsibleParties'])
         dataciteJSONrecord.set_publication_year(imported_record['date'])
+        dataciteJSONrecord.record['creators'] = []
+        for person in imported_record['responsibleParties']:
+            dataciteJSONrecord.record['creators'].append(dataciteJSONrecord.set_creators(person))
         dataciteJSONrecord.record['subjects'] = []
         for word in imported_record['keyword']:
             dataciteJSONrecord.record['subjects'].append(dataciteJSONrecord.set_subject(word,'general'))
+        dataciteJSONrecord.set_resource_type(imported_record['scope'])
+        dataciteJSONrecord.set_rightsList(imported_record['rights'],imported_record['rightsURI'])
+        dataciteJSONrecord.set_description(imported_record['abstract'])
+        dataciteJSONrecord.record["dates"] = []
+        dataciteJSONrecord.record['alternateIdentifiers'] = []
+        for identifier in imported_record['alternateIdentifiers']:
+            dataciteJSONrecord.set_alternateIdentifiers(imported_record['alternateIdentifiers'])
+        #"alternateIdentifiers"
+
+        #optional fields
+        dataciteJSONrecord.set_identifier(imported_record['DOI'])
         dataciteJSONrecord.record['contributors'] = []
         for person in imported_record['responsibleParties.1']:
             dataciteJSONrecord.record['contributors'].append(dataciteJSONrecord.set_contributor(person))
@@ -59,10 +74,22 @@ class builder:
             dataciteJSONrecord.record['creators'].append(dataciteJSONrecord.set_creators(person))
         #dataciteJSONrecord.set_date(imported_record['startTime']) #TODO: date functions need to be applicable across schemas
         dataciteJSONrecord.set_language()
-        dataciteJSONrecord.set_resource_type(imported_record['scope'])
-        dataciteJSONrecord.record['alternateIdentifiers'] = []
-        #dataciteJSONrecord.set_alternateIdentifiers() #TODO: This is for any other type of identifier (No input field)
-        #dataciteJSONrecord.set_size('') #TODO: No input field
+
+        if imported_record['fundingReference']:
+            pass
+        else:
+            dataciteJSONrecord.set_fundingReference(imported_record['fundingReference'])
+
+        if imported_record['alternateIdentifiers']:
+            pass
+        else:
+             #TODO: This is for any other type of identifier (No input field)
+
+        if imported_record['size']:
+            pass
+        else:
+            dataciteJSONrecord.set_size(imported_record['size']) #TODO: No input field
+
         dataciteJSONrecord.set_format(imported_record['formatName'])
         #dataciteJSONrecord.set_version() #TODO: No input field (This is the dataset version)
         dataciteJSONrecord.set_rightsList(imported_record['rights'],imported_record['rightsURI'])
