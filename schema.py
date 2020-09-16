@@ -192,19 +192,17 @@ class DataCiteSchemaGenerator(Schema):
             }
 
     def set_immutableResource(self, resource):
-        for res in resource:
             self.record["immutableResource"] = {
-                "resourceURL": res['linkage'],
-                "resourceName": res['description'],
-                "resourceDescription": res['name']
+                "resourceURL": resource['linkage'],
+                "resourceName": resource['description'],
+                "resourceDescription": resource['name']
             }
 
-    def set_linkedResources(self, resourcetype, resourceURL, resourceName, resourceDescription):
-        self.record["linkedResources"] = {
-            "linkedResourceType": resourcetype,
-            "resourceURL": resourceURL,
-            "resourceName": resourceName,
-            "resourceDescription": resourceDescription
+    def set_linkedResources(self, resource):
+        return {
+            "linkedResourceType": 'Information',
+            "resourceURL": resource['linkage'],
+            "resourceName": resource['description']
         }
 
     # def set_originalMetadata(self,):

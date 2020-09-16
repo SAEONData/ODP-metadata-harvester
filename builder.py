@@ -1,3 +1,4 @@
+from datetime import datetime
 from schema import SANS1878SchemaGenerator
 from schema import DataCiteSchemaGenerator
 class builder:
@@ -60,8 +61,8 @@ class builder:
         dataciteJSONrecord.set_description(imported_record['abstract'])
         dataciteJSONrecord.record["dates"] = []
         dataciteJSONrecord.record['alternateIdentifiers'] = []
-        for identifier in imported_record['alternateIdentifiers']:
-            dataciteJSONrecord.set_alternateIdentifiers(imported_record['alternateIdentifiers'])
+        # for identifier in imported_record['alternateIdentifiers']:
+        #     dataciteJSONrecord.set_alternateIdentifiers(imported_record['alternateIdentifiers']) #TODO: rework to the online resources input
 
         #optional fields
         dataciteJSONrecord.set_identifier(imported_record['DOI'])
@@ -98,9 +99,18 @@ class builder:
         else:
             dataciteJSONrecord.set_version(imported_record['datasetVersion'])
 
+        for resource in imported_record['onlineResources']:
+            if resource['description'] == 'download':
+                dataciteJSONrecord.set_immutableResource(resource)
+            elif resource['description'] == 'information':
+                dataciteJSONrecord.record['linkedResources'] = []
+                dataciteJSONrecord.record['linkedResources'].append(dataciteJSONrecord.set_linkedResources(resource))
+            else:
+                raise DataCiteSchemaGenerator
+
         #dataciteJSONrecord.set_geolocations(imported_record['boundingBox'],imported_record['placeKeywords (CV)'],imported_record['geographicIdentifier']) #TODO: Function before schema
 
         #dataciteJSONrecord.record['linkedResources'] = []
-        #dataciteJSONrecord.set_linkedResources(imported_record['onlineResources']) #TODO: No input field (This is supplementary info)
+
         return dataciteJSONrecord.record
 
