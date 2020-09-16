@@ -1,6 +1,6 @@
 import sys
 import traceback
-
+from datetime import datetime
 import pandas
 
 class RecordParseError(Exception):
@@ -69,7 +69,9 @@ class ExcelImporter:
         self.parse_column_list(record,'size')
         self.parse_column_list(record,'fundingReferences')
         #self.parse_column_list(record,'datasetVersion')#TODO: needs to take an int type
-        self.parse_listed_dict(record,'alternativeIdentifier')
+        self.parse_listed_dict(record,'alternateIdentifiers')
+        self.parse_time_field(record,'startTime')
+        self.parse_time_field(record,'endTime')
 
 
     def parse_file_identifier(self, record):
@@ -244,3 +246,21 @@ class ExcelImporter:
             for field in valid_fields:
                 if field not in record[field_name]:
                     raise RecordParseError("Invalid %r format: %r" % (field_name,str(record[field_name])))
+
+    def parse_time_field(self,record,field_name):
+        imported_time = record[field_name]
+        if str(imported_time) == "nan":
+            record[field_name] = None
+            return
+        converted_time = self.convert_date(imported_time)
+        record[field_name] = converted_time
+
+    def convert_date(self, date_input):
+        supported_formats = ["%Y-%m-%d", "%d-%m-%Y", '%Y', "%Y/%m/%d %H:%M",
+                             "%Y-%m-%d %H:%M:%S"]
+        for fmt in supported_formats:
+            try:
+                return datetime.strptime(str(date_input), fmt)
+            except ValueError:
+                pass
+        raise ValueError('no valid date format found record')
