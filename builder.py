@@ -42,7 +42,8 @@ class builder:
         sansJSONrecord.set_abstract(imported_record['abstract'])
         return sansJSONrecord.record
 
-    def build_datacite_json_record(self,imported_record): #TODO: put in a control for non required fields
+    def build_datacite_json_record(self,imported_record):
+        # Inserts the contents of the imported record into the datacite JSON format
         dataciteJSONrecord = DataCiteSchemaGenerator()
         dataciteJSONrecord.record = {}
 
@@ -61,16 +62,19 @@ class builder:
         dataciteJSONrecord.set_description(imported_record['abstract'])
         dataciteJSONrecord.record["dates"] = []
         dataciteJSONrecord.record['alternateIdentifiers'] = []
-        # for identifier in imported_record['alternateIdentifiers']:
-        #     dataciteJSONrecord.set_alternateIdentifiers(imported_record['alternateIdentifiers']) #TODO: rework to the online resources input
+        for identifier in imported_record['alternateIdentifiers']:
+            dataciteJSONrecord.record['alternateIdentifiers'].append(dataciteJSONrecord.set_alternateIdentifiers(identifier))
 
         #optional fields
         dataciteJSONrecord.set_identifier(imported_record['DOI'])
         dataciteJSONrecord.set_language()
 
-        dataciteJSONrecord.record['contributors'] = []
-        for person in imported_record['responsibleParties.1']:
-            dataciteJSONrecord.record['contributors'].append(dataciteJSONrecord.set_contributor(person))
+        if imported_record['responsibleParties.1']:
+            pass
+        else:
+            dataciteJSONrecord.record['contributors'] = []
+            for person in imported_record['responsibleParties.1']:
+                dataciteJSONrecord.record['contributors'].append(dataciteJSONrecord.set_contributor(person))
 
         # if imported_record['startTime'] & imported_record['endTime']:
         #     pass
@@ -106,7 +110,18 @@ class builder:
                 dataciteJSONrecord.record['linkedResources'] = []
                 dataciteJSONrecord.record['linkedResources'].append(dataciteJSONrecord.set_linkedResources(resource))
             else:
-                raise DataCiteSchemaGenerator
+                pass
+
+        if imported_record['relatedIdentifiers']:
+            pass
+        else:
+            dataciteJSONrecord.record['relatedIdentifiers'] = []
+            for related in imported_record['relatedIdentifiers']:
+                if related['relationType'] == "IsMetadataFor" or related['relationType'] == "HasMetadata":
+                    imported_record['relatedIdentifiers'].append(dataciteJSONrecord.set_relatedIdentifiers_metadata(related))
+                else:
+                    imported_record['relatedIdentifiers'].append(dataciteJSONrecord.set_relatedIdentifers(related))
+
 
         #dataciteJSONrecord.set_geolocations(imported_record['boundingBox'],imported_record['placeKeywords (CV)'],imported_record['geographicIdentifier']) #TODO: Function before schema
 

@@ -90,32 +90,27 @@ class DataCiteSchemaGenerator(Schema):
             , "resourceType": type
         }
 
-    def set_alternateIdentifiers(self, description, type):
-        self.record["alternateIdentifiers"] = {
-            "alternateIdentifier": description,
-            "alternateIdentifierType": type
+    def set_alternateIdentifiers(self, alternate):
+        return {
+            "alternateIdentifier": alternate['identifier'],
+            "alternateIdentifierType": alternate['identifierType']
         }
 
-    # def add_relatedIdentifers(self,ID,relationType,relation):
-    #     if relationType == "IsMetadataFor" or relationType == "HasMetadata":
-    #         self.record["relatedIdentifiers"] = [
-    #             {
-    #                 "relatedIdentifier": "https://data.datacite.org/application/citeproc+json/10.5072/example-full",
-    #                 "relatedIdentifierType": "URL",
-    #                 "relationType": "HasMetadata",
-    #                 "relatedMetadataScheme": "citeproc+json",
-    #                 "schemeURI": "https://github.com/citation-style-language/schema/raw/master/csl-data.json"
-    #             }
-    #         ]
-    #     else:
-    #         self.record["relatedIdentifiers"] = [
-    #             {
-    #             "relatedIdentifier": "arXiv:0706.0001",
-    #             "relatedIdentifierType": "arXiv",
-    #             "relationType": "IsReviewedBy",
-    #             "resourceTypeGeneral": "Text"
-    #             }
-    #         ] #TODO: need to put the switch one level up so that inputs into the function are consistent across the cases
+    def set_relatedIdentifers(self,related):
+        return {
+            "relatedIdentifier": related['relatedIdentifier'],
+            "relatedIdentifierType": related['relatedIdentifierType'],
+            "relationType": related['relationType']
+            }
+
+    def set_relatedIdentifiers_metadata(self,related):
+        return {
+            "relatedIdentifier": related['relatedIdentifier'],
+            "relatedIdentifierType": related['relatedIdentifierType'],
+            "relationType": related['relationType'],
+            "relatedMetadataScheme": related['metadataScheme'],
+            "schemeURI": related['metadataSchemaURI']
+            }
 
     def set_size(self, datasize):
         self.record["sizes"] = datasize  # TODO: Because this is a list, check if it's one value
@@ -142,7 +137,7 @@ class DataCiteSchemaGenerator(Schema):
             }
         ]
 
-    def set_geolocations(self, longitude, latitude):
+    def set_geolocations(self, location):
         self.record["geoLocations"] = [
             {
                 "geoLocationPlace": "Atlantic Ocean",
@@ -211,11 +206,6 @@ class DataCiteSchemaGenerator(Schema):
 
     def get_filled_schema(self):
         return self.record
-
-    # datacite=dataciteSchemaGenerator()
-    # datacite.add_contributor("kyle","Cooper","SAEON","publisher","0000-0002-7285-027X")
-    # pprint(datacite.record)
-
 
 class SANS1878SchemaGenerator(Schema):
     # Create a SANS1878 JSON record

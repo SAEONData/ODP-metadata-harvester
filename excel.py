@@ -13,7 +13,8 @@ class ExcelImporter:
          'responsibleParties.1','responsibleParties.Publisher','keyword','instrumentKeywords (CV)','status','topicCategories', 'abstract',
          'languages', 'formatName', 'spatialRepresentationType', 'spatialResolution', 'referenceSystemName', 'scope',
          'geographicIdentifier','placeKeywords (CV)', 'boundingBox', 'verticalElement', 'startTime', 'endTime', 'rights',
-         'rightsURI', 'lineageStatement', 'onlineResources', 'relatedIdentifiers','size','fundingReferences','datasetVersion']
+         'rightsURI', 'lineageStatement', 'onlineResources', 'relatedIdentifiers','size','fundingReferences','datasetVersion',
+         'alternateIdentifiers']
 
     def __init__(self):
         pass
