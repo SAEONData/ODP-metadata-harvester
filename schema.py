@@ -196,6 +196,14 @@ class DataCiteSchemaGenerator(Schema):
             "resourceName": resource['description']
         }
 
+    def set_geolocation_box(self,box):
+        return {
+            "westBoundLongitude": box['westBoundLongitude'],
+            "eastBoundLongitude": box['eastBoundLongitude'],
+            "southBoundLatitude": box['southBoundLatitude'],
+            "northBoundLatitude": box['northBoundLatitude']
+        }
+
     # def set_originalMetadata(self,):
     #     self.record"originalMetadata": "<?xml version=\"1.0\"?><resource>...the original metadata...</resource>"
     # TODO: check with mark about this field

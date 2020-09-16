@@ -127,6 +127,11 @@ class builder:
                 else:
                     imported_record['relatedIdentifiers'].append(dataciteJSONrecord.set_relatedIdentifers(related))
 
+        if imported_record['boundingBox']:
+            pass
+        else:
+            imported_record['geoLocations'] = []
+            dataciteJSONrecord.record['geoLocations'].append(dataciteJSONrecord.set_geolocation_box(imported_record['boundingBox']))
 
         #dataciteJSONrecord.set_geolocations(imported_record['boundingBox'],imported_record['placeKeywords (CV)'],imported_record['geographicIdentifier']) #TODO: Function before schema
 
