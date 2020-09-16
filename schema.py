@@ -64,20 +64,16 @@ class DataCiteSchemaGenerator(Schema):
             ]
         }
 
-    def convert_date(self, date_input):
-        supported_formats = ["%Y-%m-%d", "%d-%m-%Y", '%Y', "%Y/%m/%d %H:%M",
-                             "%Y-%m-%d %H:%M:%S"]  # 2015/03/12 12:00
-        for fmt in supported_formats:
-            try:
-                return datetime.strptime(str(date_input), fmt)
-            except ValueError:
-                pass
-        raise ValueError('no valid date format found record')
-
-    def set_start_date(self, start_date):
+    def set_only_start_date(self, start_date):
         timestamp_str = start_date.strftime("%Y-%m-%d")
-        self.record["dates"] = {
+        return {
                 "date": timestamp_str + '/',
+                "dateType": 'Valid'
+            }
+
+    def set_date(self,start_date,end_date):
+        return {
+                "date": start_date.strftime("%Y-%m-%d") + '/' + end_date.strftime("%Y-%m-%d"),
                 "dateType": 'Valid'
             }
 

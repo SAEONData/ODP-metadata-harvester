@@ -1,4 +1,4 @@
-from datetime import datetime
+import datetime
 from schema import SANS1878SchemaGenerator
 from schema import DataCiteSchemaGenerator
 class builder:
@@ -76,12 +76,17 @@ class builder:
             for person in imported_record['responsibleParties.1']:
                 dataciteJSONrecord.record['contributors'].append(dataciteJSONrecord.set_contributor(person))
 
-        # if imported_record['startTime'] & imported_record['endTime']:
-        #     pass
-        # else:
-        #     dataciteJSONrecord.set_date(self.convert_date(imported_record['startTime']),
-        #                                 self.convert_date(imported_record['endTime'])) #TODO: date functions need to be applicable across schemas
-        #
+        if not imported_record['startTime'] and not imported_record['endTime']:
+            pass
+        elif isinstance(imported_record['startTime'],datetime.date) and isinstance(imported_record['endTime'],datetime.date):
+            dataciteJSONrecord.record['dates'] = []
+            dataciteJSONrecord.record['dates'].append(dataciteJSONrecord.set_date(imported_record['startTime'],imported_record['endTime']))
+        elif isinstance(imported_record['startTime'],datetime.date) and not imported_record['endTime']:
+            dataciteJSONrecord.record['dates'] = []
+            dataciteJSONrecord.record['dates'].append(dataciteJSONrecord.set_only_start_date(imported_record['startTime']))
+        else:
+            print('error')
+
         if imported_record['fundingReferences']:
             pass
         else:
