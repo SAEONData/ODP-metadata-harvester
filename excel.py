@@ -55,7 +55,7 @@ class ExcelImporter:
         self.parse_column_list(record, 'topicCategories')
         self.parse_field_to_dict(record,'relatedIdentifiers',
                                        ['relatedIdentifier', 'relatedIdentifierType', 'relationType'])
-        self.parse_online_resources(record,'onlineResources')
+        self.parse_listed_dict(record, 'onlineResources')
         self.parse_field_to_dict(record,'referenceSystemName',
                                        ['codeSpace', 'version'])
         self.parse_place_keywords(record, 'descriptiveKeywords', False)
@@ -68,7 +68,7 @@ class ExcelImporter:
         self.parse_column_list(record,'size')
         self.parse_column_list(record,'fundingReferences')
         #self.parse_column_list(record,'datasetVersion')#TODO: needs to take an int type
-        self.parse_field_to_dict(record,'alternativeIdentifier',['identifier','identifierType'])
+        self.parse_listed_dict(record,'alternativeIdentifier')
 
 
     def parse_file_identifier(self, record):
@@ -118,16 +118,15 @@ class ExcelImporter:
             raise RecordParseError("Invalid responible party - {}".format(item))
         record[field] = responsible_parties
 
-    def parse_online_resources(self, record, field):
+    def parse_listed_dict(self, record, field):
         if str(record[field]) == 'nan':
             record[field] = ''
         else:
-            valid_keys = ['name', 'description', 'linkage']
             resource = []
             raw_str = record[field]
             for detail_str in raw_str.split(";"):
                 if len(detail_str.replace(" ", "")) > 0:
-                    detail = {'name': '', 'description': '', 'linkage': ''}
+                    detail = {}
                     for item in detail_str.split("|"):
                        k, v = item.split(":",1)
                        k = k.replace(" ", "")

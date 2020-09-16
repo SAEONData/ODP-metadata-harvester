@@ -110,7 +110,5 @@ class builder:
 
         #dataciteJSONrecord.set_geolocations(imported_record['boundingBox'],imported_record['placeKeywords (CV)'],imported_record['geographicIdentifier']) #TODO: Function before schema
 
-        #dataciteJSONrecord.record['linkedResources'] = []
-
         return dataciteJSONrecord.record
 
