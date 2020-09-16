@@ -60,8 +60,8 @@ class builder:
         dataciteJSONrecord.set_description(imported_record['abstract'])
         dataciteJSONrecord.record["dates"] = []
         dataciteJSONrecord.record['alternateIdentifiers'] = []
-        # for identifier in imported_record['alternateIdentifiers']:
-        #     dataciteJSONrecord.set_alternateIdentifiers(imported_record['alternateIdentifiers'])
+        for identifier in imported_record['alternateIdentifiers']:
+            dataciteJSONrecord.set_alternateIdentifiers(imported_record['alternateIdentifiers'])
 
         #optional fields
         dataciteJSONrecord.set_identifier(imported_record['DOI'])
@@ -99,7 +99,7 @@ class builder:
             dataciteJSONrecord.set_version(imported_record['datasetVersion'])
 
         #dataciteJSONrecord.set_geolocations(imported_record['boundingBox'],imported_record['placeKeywords (CV)'],imported_record['geographicIdentifier']) #TODO: Function before schema
-        #dataciteJSONrecord.set_immutableResource(imported_record['onlineResources'])
+
         #dataciteJSONrecord.record['linkedResources'] = []
         #dataciteJSONrecord.set_linkedResources(imported_record['onlineResources']) #TODO: No input field (This is supplementary info)
         return dataciteJSONrecord.record

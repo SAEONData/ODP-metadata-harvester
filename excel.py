@@ -58,16 +58,17 @@ class ExcelImporter:
         self.parse_online_resources(record,'onlineResources')
         self.parse_field_to_dict(record,'referenceSystemName',
                                        ['codeSpace', 'version'])
-        self.parse_place_keywords(record,'descriptiveKeywords',['keywordType', 'keyword'],False)
-        self.parse_place_keywords(record,'placeKeywords (CV)',['keywordType', 'keyword'],True)
-        self.parse_place_keywords(record, 'instrumentKeywords (CV)',['keywordType', 'keyword'],True)
+        self.parse_place_keywords(record, 'descriptiveKeywords', False)
+        self.parse_place_keywords(record, 'placeKeywords (CV)', True)
+        self.parse_place_keywords(record, 'instrumentKeywords (CV)', True)
         self.parse_field_to_dict(record,'boundingBox',
                                        ['northBoundLatitude', 'southBoundLatitude',
                                        'eastBoundLongitude', 'westBoundLongitude'],True)
         self.parse_field_to_dict(record,'verticalElement',['minimumValue','maximumValue','unitOfMeasure', 'verticalDatum'],True)
         self.parse_column_list(record,'size')
         self.parse_column_list(record,'fundingReferences')
-        self.parse_column_list(record,'datasetVersion')
+        #self.parse_column_list(record,'datasetVersion')#TODO: needs to take an int type
+        self.parse_field_to_dict(record,'alternativeIdentifier',['identifier','identifierType'])
 
 
     def parse_file_identifier(self, record):
@@ -166,8 +167,7 @@ class ExcelImporter:
                 traceback.print_exc(file=sys.stdout)
                 raise RecordParseError("Invalid bounding box: {}".format(box_str))
 
-    def parse_place_keywords(self, record, field_name, valid_fields, append_mode=False):
-        #valid_keys = []
+    def parse_place_keywords(self, record, field_name, append_mode=False):
         descriptive_keywords = []
         if str(field_name) == "descriptiveKeywords":
             if str(record[field_name]) == 'nan':
