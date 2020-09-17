@@ -82,8 +82,7 @@ class DataCiteSchemaGenerator(Schema):
 
     def set_resource_type(self, type):
         self.record["resourceType"] = {
-            "resourceTypeGeneral": 'TK'  # TODO: Enquire to mark about this field
-            , "resourceType": type
+            "resourceTypeGeneral": type
         }
 
     def set_alternateIdentifiers(self, alternate):
@@ -109,7 +108,7 @@ class DataCiteSchemaGenerator(Schema):
             }
 
     def set_size(self, datasize):
-        self.record["sizes"] = datasize  # TODO: Because this is a list, check if it's one value
+        self.record["sizes"] = datasize
 
     def set_format(self, dataformat):
         self.record["formats"] = dataformat
@@ -133,49 +132,6 @@ class DataCiteSchemaGenerator(Schema):
             }
         ]
 
-    def set_geolocations(self, location):
-        self.record["geoLocations"] = [
-            {
-                "geoLocationPlace": "Atlantic Ocean",
-                "geoLocationPoint": {
-                    "pointLongitude": "-67.302",
-                    "pointLatitude": "31.233"
-                },
-                "geoLocationBox": {
-                    "westBoundLongitude": "-71.032",
-                    "eastBoundLongitude": "-68.211",
-                    "southBoundLatitude": "41.090",
-                    "northBoundLatitude": "42.893"
-                },
-                "geoLocationPolygons": [
-                    {
-                        "polygonPoints": [
-                            {
-                                "pointLatitude": "41.991",
-                                "pointLongitude": "-71.032"
-                            },
-                            {
-                                "pointLatitude": "42.893",
-                                "pointLongitude": "-69.622"
-                            },
-                            {
-                                "pointLatitude": "41.991",
-                                "pointLongitude": "-68.211"
-                            },
-                            {
-                                "pointLatitude": "41.090",
-                                "pointLongitude": "-69.622"
-                            },
-                            {
-                                "pointLatitude": "41.991",
-                                "pointLongitude": "-71.032"
-                            }
-                        ]
-                    }
-                ]
-            }
-        ]
-        # TODO: Chat with leo regarding the when to switch between the three
 
     def set_fundingReference(self, name):
         self.record["fundingReferences"] = {

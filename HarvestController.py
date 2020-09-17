@@ -15,7 +15,7 @@ class HarvestController:
             try:
                 result = client.create_or_update_metadata_record('chief-directorate-oceans-and-coastal-research',
                                                                  'marine-information-management-system-collection',
-                                                                 'sans-1878-mims-historical-1',
+                                                                 'saeon-odp-4-2',
                                                                  record,capture_method='harvester',
                                                                  data_agreement_url='https://www.environment.gov.za/branches/oceans_coast')
             except ODPException as e:

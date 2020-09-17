@@ -96,7 +96,8 @@ class builder:
         if imported_record['size']:
             pass
         else:
-            dataciteJSONrecord.set_size(imported_record['size'])
+            dataciteJSONrecord.record['size'] = []
+            dataciteJSONrecord.record['size'].append(dataciteJSONrecord.set_size(imported_record['size']))
 
         if imported_record['formatName']:
             pass
@@ -117,7 +118,7 @@ class builder:
             else:
                 pass
 
-        if imported_record['relatedIdentifiers']:
+        if imported_record['relatedIdentifiers'] is None:
             pass
         else:
             dataciteJSONrecord.record['relatedIdentifiers'] = []
@@ -132,8 +133,6 @@ class builder:
         else:
             imported_record['geoLocations'] = []
             dataciteJSONrecord.record['geoLocations'].append(dataciteJSONrecord.set_geolocation_box(imported_record['boundingBox']))
-
-        #dataciteJSONrecord.set_geolocations(imported_record['boundingBox'],imported_record['placeKeywords (CV)'],imported_record['geographicIdentifier']) #TODO: Function before schema
 
         return dataciteJSONrecord.record
 

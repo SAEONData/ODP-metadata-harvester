@@ -68,7 +68,6 @@ class ExcelImporter:
         self.parse_field_to_dict(record,'verticalElement',['minimumValue','maximumValue','unitOfMeasure', 'verticalDatum'],True)
         self.parse_column_list(record,'size')
         self.parse_column_list(record,'fundingReferences')
-        #self.parse_column_list(record,'datasetVersion')#TODO: needs to take an int type
         self.parse_listed_dict(record,'alternateIdentifiers')
         self.parse_time_field(record,'startTime')
         self.parse_time_field(record,'endTime')
