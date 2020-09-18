@@ -69,7 +69,7 @@ class builder:
         dataciteJSONrecord.set_identifier(imported_record['DOI'])
         dataciteJSONrecord.set_language()
 
-        if imported_record['responsibleParties.1']:
+        if imported_record['responsibleParties.1'] is None:
             pass
         else:
             dataciteJSONrecord.record['contributors'] = []
@@ -87,36 +87,39 @@ class builder:
         else:
             print('error')
 
-        if imported_record['fundingReferences']:
+        if imported_record['fundingReferences'] is None:
             pass
         else:
             dataciteJSONrecord.record["fundingReferences"] = []
             dataciteJSONrecord.set_fundingReference(imported_record['fundingReferences'])
 
-        if imported_record['size']:
+        if imported_record['size'] is None:
             pass
         else:
             dataciteJSONrecord.record['size'] = []
             dataciteJSONrecord.record['size'].append(dataciteJSONrecord.set_size(imported_record['size']))
 
-        if imported_record['formatName']:
+        if imported_record['formatName'] is None:
             pass
         else:
             dataciteJSONrecord.set_format(imported_record['formatName'])
 
-        if imported_record['datasetVersion']:
+        if imported_record['datasetVersion'] is None:
             pass
         else:
             dataciteJSONrecord.set_version(imported_record['datasetVersion'])
 
-        for resource in imported_record['onlineResources']:
-            if resource['description'] == 'download':
-                dataciteJSONrecord.set_immutableResource(resource)
-            elif resource['description'] == 'information':
-                dataciteJSONrecord.record['linkedResources'] = []
-                dataciteJSONrecord.record['linkedResources'].append(dataciteJSONrecord.set_linkedResources(resource))
-            else:
-                pass
+        if imported_record['onlineResources'] is None:
+            pass
+        else:
+            for resource in imported_record['onlineResources']:
+                if resource['description'] == 'download':
+                    dataciteJSONrecord.set_immutableResource(resource)
+                elif resource['description'] == 'information':
+                    dataciteJSONrecord.record['linkedResources'] = []
+                    dataciteJSONrecord.record['linkedResources'].append(dataciteJSONrecord.set_linkedResources(resource))
+                else:
+                    pass
 
         if imported_record['relatedIdentifiers'] is None:
             pass
@@ -128,7 +131,7 @@ class builder:
                 else:
                     imported_record['relatedIdentifiers'].append(dataciteJSONrecord.set_relatedIdentifers(related))
 
-        if imported_record['boundingBox']:
+        if imported_record['boundingBox'] is None:
             pass
         else:
             imported_record['geoLocations'] = []

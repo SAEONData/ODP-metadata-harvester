@@ -23,7 +23,7 @@ class ExcelImporter:
     def read_excel_to_json(self, spreadsheet_file, sheet):
         raw_record = None
         try:
-            df = pandas.read_excel(spreadsheet_file,sheet)
+            df = pandas.read_excel(spreadsheet_file,sheet,dtype=object)
             raw_records = []
             for index, row in df.iterrows():
                 try:
@@ -41,11 +41,6 @@ class ExcelImporter:
         return raw_records
 
     def parse_raw_record(self, record):
-        for col in record.keys():
-            if col not in self._required_columns:
-                #raise Exception("required column missing: {}".format(col))
-                print("Extra column found: {}".format(col))
-
         # parse where necessary
         self.parse_file_identifier(record)
         self.parse_responsible_parties(record, 'responsibleParties')
@@ -71,6 +66,10 @@ class ExcelImporter:
         self.parse_listed_dict(record,'alternateIdentifiers')
         self.parse_time_field(record,'startTime')
         self.parse_time_field(record,'endTime')
+
+        for col in record.keys():
+            if str(record[col]) == 'nan' or record[col] is None:
+                record[col] = None
 
 
     def parse_file_identifier(self, record):
