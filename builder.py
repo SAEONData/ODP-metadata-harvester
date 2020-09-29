@@ -1,18 +1,21 @@
 import datetime
 from schema import SANS1878SchemaGenerator
 from schema import DataCiteSchemaGenerator
+
 class builder:
     def __init__(self):
         pass
 
     def build_sans_json_record(self,imported_record):
         #Inserts the contents of the imported SANS record into the JSON format
-        sansJSONrecord = SANS1878SchemaGenerator()
+        sansJSONrecord = SANS1878SchemaGenerator(imported_record['DOI']) #TODO: handle None type sent from records
         sansJSONrecord.begin_record()
         sansJSONrecord.set_title(imported_record['title'])
         sansJSONrecord.set_date(imported_record['date'])
         sansJSONrecord.set_file_identifier(str(imported_record['fileIdentifier']))
-        sansJSONrecord.set_responsible_party(imported_record['responsibleParties']) #TODO: implement new imported structure of responsible parties
+        sansJSONrecord.set_responsible_party(imported_record['responsibleParties'])
+        sansJSONrecord.set_responsible_party(imported_record['responsibleParties.1'])
+        sansJSONrecord.set_responsible_party(imported_record['responsibleParties.Publisher'])
         sansJSONrecord.set_geographic_identifier(str(imported_record['geographicIdentifier']))
         sansJSONrecord.set_bounding_box_extent(imported_record['boundingBox'])
         sansJSONrecord.set_vertical_extent(imported_record['verticalElement'])
@@ -44,16 +47,15 @@ class builder:
 
     def build_datacite_json_record(self,imported_record):
         # Inserts the contents of the imported record into the datacite JSON format
-        dataciteJSONrecord = DataCiteSchemaGenerator()
-        dataciteJSONrecord.record = {}
+        dataciteJSONrecord = DataCiteSchemaGenerator(imported_record['DOI'])
 
         #required fields
         dataciteJSONrecord.set_title(imported_record['title'])
-        dataciteJSONrecord.set_publisher(imported_record['responsibleParties'])
+        dataciteJSONrecord.set_publisher(imported_record['responsibleParties.Publisher'])
         dataciteJSONrecord.set_publication_year(imported_record['date'])
-        dataciteJSONrecord.record['creators'] = []
-        for person in imported_record['responsibleParties']:
-            dataciteJSONrecord.record['creators'].append(dataciteJSONrecord.set_creators(person))
+        dataciteJSONrecord.set_creators(imported_record['responsibleParties'])
+
+
         dataciteJSONrecord.record['subjects'] = []
         for word in imported_record['keyword']:
             dataciteJSONrecord.record['subjects'].append(dataciteJSONrecord.set_subject(word,'general'))
@@ -69,9 +71,7 @@ class builder:
         dataciteJSONrecord.set_identifier(imported_record['DOI'])
         dataciteJSONrecord.set_language()
 
-        if imported_record['responsibleParties.1'] is None:
-            pass
-        else:
+        if imported_record['responsibleParties.1'] is not None:
             dataciteJSONrecord.record['contributors'] = []
             for person in imported_record['responsibleParties.1']:
                 dataciteJSONrecord.record['contributors'].append(dataciteJSONrecord.set_contributor(person))
@@ -134,7 +134,7 @@ class builder:
         if imported_record['boundingBox'] is None:
             pass
         else:
-            imported_record['geoLocations'] = []
+            dataciteJSONrecord.record['geoLocations'] = []
             dataciteJSONrecord.record['geoLocations'].append(dataciteJSONrecord.set_geolocation_box(imported_record['boundingBox']))
 
         return dataciteJSONrecord.record

@@ -41,6 +41,11 @@ class ExcelImporter:
         return raw_records
 
     def parse_raw_record(self, record):
+
+        # for col in record.keys():
+        #     if str(record[col]) == 'nan' or record[col] is None:
+        #         record[col] = None
+
         # parse where necessary
         self.parse_file_identifier(record)
         self.parse_responsible_parties(record, 'responsibleParties')
@@ -61,16 +66,11 @@ class ExcelImporter:
                                        ['northBoundLatitude', 'southBoundLatitude',
                                        'eastBoundLongitude', 'westBoundLongitude'],True)
         self.parse_field_to_dict(record,'verticalElement',['minimumValue','maximumValue','unitOfMeasure', 'verticalDatum'],True)
-        self.parse_column_list(record,'size')
-        self.parse_column_list(record,'fundingReferences')
-        self.parse_listed_dict(record,'alternateIdentifiers')
-        self.parse_time_field(record,'startTime')
-        self.parse_time_field(record,'endTime')
-
-        for col in record.keys():
-            if str(record[col]) == 'nan' or record[col] is None:
-                record[col] = None
-
+        # self.parse_column_list(record,'size')
+        # self.parse_column_list(record,'fundingReferences')
+        # self.parse_listed_dict(record,'alternateIdentifiers')
+        # self.parse_time_field(record,'startTime')
+        # self.parse_time_field(record,'endTime')
 
     def parse_file_identifier(self, record):
         if type(record['fileIdentifier']) == float:
@@ -120,7 +120,7 @@ class ExcelImporter:
         record[field] = responsible_parties
 
     def parse_listed_dict(self, record, field):
-        if str(record[field]) == 'nan':
+        if record[field] is None:
             record[field] = ''
         else:
             resource = []
