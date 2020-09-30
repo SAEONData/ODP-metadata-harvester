@@ -15,7 +15,6 @@ class MetadataHarvest:
                 json_records.append(json_builder)
             except SchemaFormatError as e:
                 print(f'ERROR!!: record ID {e.record_id}:{e}')
-
         return json_records
 
     def get_builder(self, imported_record):

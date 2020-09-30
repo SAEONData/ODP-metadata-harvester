@@ -1,6 +1,6 @@
 import datetime
-from schema import SANS1878SchemaGenerator
-from schema import DataCiteSchemaGenerator
+from sansschema import SANS1878SchemaGenerator
+from dataciteschema import DataCiteSchemaGenerator
 
 class builder:
     def __init__(self):
@@ -54,88 +54,23 @@ class builder:
         dataciteJSONrecord.set_publisher(imported_record['responsibleParties.Publisher'])
         dataciteJSONrecord.set_publication_year(imported_record['date'])
         dataciteJSONrecord.set_creators(imported_record['responsibleParties'])
-
-
-        dataciteJSONrecord.record['subjects'] = []
-        for word in imported_record['keyword']:
-            dataciteJSONrecord.record['subjects'].append(dataciteJSONrecord.set_subject(word,'general'))
+        dataciteJSONrecord.set_subject(imported_record['keyword'])
         dataciteJSONrecord.set_resource_type(imported_record['scope'])
-        dataciteJSONrecord.set_rightsList(imported_record['rights'],imported_record['rightsURI'])
+        dataciteJSONrecord.set_rights_list(imported_record['rights'],imported_record['rightsURI'])
         dataciteJSONrecord.set_description(imported_record['abstract'])
-        dataciteJSONrecord.record["dates"] = []
-        dataciteJSONrecord.record['alternateIdentifiers'] = []
-        for identifier in imported_record['alternateIdentifiers']:
-            dataciteJSONrecord.record['alternateIdentifiers'].append(dataciteJSONrecord.set_alternateIdentifiers(identifier))
-
+        dataciteJSONrecord.set_alternative_identifiers(imported_record['alternateIdentifiers'])
         #optional fields
         dataciteJSONrecord.set_identifier(imported_record['DOI'])
         dataciteJSONrecord.set_language()
-
-        if imported_record['responsibleParties.1'] is not None:
-            dataciteJSONrecord.record['contributors'] = []
-            for person in imported_record['responsibleParties.1']:
-                dataciteJSONrecord.record['contributors'].append(dataciteJSONrecord.set_contributor(person))
-
-        if not imported_record['startTime'] and not imported_record['endTime']:
-            pass
-        elif isinstance(imported_record['startTime'],datetime.date) and isinstance(imported_record['endTime'],datetime.date):
-            dataciteJSONrecord.record['dates'] = []
-            dataciteJSONrecord.record['dates'].append(dataciteJSONrecord.set_date(imported_record['startTime'],imported_record['endTime']))
-        elif isinstance(imported_record['startTime'],datetime.date) and not imported_record['endTime']:
-            dataciteJSONrecord.record['dates'] = []
-            dataciteJSONrecord.record['dates'].append(dataciteJSONrecord.set_only_start_date(imported_record['startTime']))
-        else:
-            print('error')
-
-        if imported_record['fundingReferences'] is None:
-            pass
-        else:
-            dataciteJSONrecord.record["fundingReferences"] = []
-            dataciteJSONrecord.set_fundingReference(imported_record['fundingReferences'])
-
-        if imported_record['size'] is None:
-            pass
-        else:
-            dataciteJSONrecord.record['size'] = []
-            dataciteJSONrecord.record['size'].append(dataciteJSONrecord.set_size(imported_record['size']))
-
-        if imported_record['formatName'] is None:
-            pass
-        else:
-            dataciteJSONrecord.set_format(imported_record['formatName'])
-
-        if imported_record['datasetVersion'] is None:
-            pass
-        else:
-            dataciteJSONrecord.set_version(imported_record['datasetVersion'])
-
-        if imported_record['onlineResources'] is None:
-            pass
-        else:
-            for resource in imported_record['onlineResources']:
-                if resource['description'] == 'download':
-                    dataciteJSONrecord.set_immutableResource(resource)
-                elif resource['description'] == 'information':
-                    dataciteJSONrecord.record['linkedResources'] = []
-                    dataciteJSONrecord.record['linkedResources'].append(dataciteJSONrecord.set_linkedResources(resource))
-                else:
-                    pass
-
-        if imported_record['relatedIdentifiers'] is None:
-            pass
-        else:
-            dataciteJSONrecord.record['relatedIdentifiers'] = []
-            for related in imported_record['relatedIdentifiers']:
-                if related['relationType'] == "IsMetadataFor" or related['relationType'] == "HasMetadata":
-                    imported_record['relatedIdentifiers'].append(dataciteJSONrecord.set_relatedIdentifiers_metadata(related))
-                else:
-                    imported_record['relatedIdentifiers'].append(dataciteJSONrecord.set_relatedIdentifers(related))
-
-        if imported_record['boundingBox'] is None:
-            pass
-        else:
-            dataciteJSONrecord.record['geoLocations'] = []
-            dataciteJSONrecord.record['geoLocations'].append(dataciteJSONrecord.set_geolocation_box(imported_record['boundingBox']))
+        dataciteJSONrecord.set_contributor(imported_record['responsibleParties.1'])
+        dataciteJSONrecord.set_time(imported_record['startTime'],imported_record['endTime'])
+        dataciteJSONrecord.set_funding_reference(imported_record['fundingReferences'])
+        dataciteJSONrecord.set_size(imported_record['size'])
+        dataciteJSONrecord.set_format(imported_record['formatName'])
+        dataciteJSONrecord.set_version(imported_record['datasetVersion'])
+        dataciteJSONrecord.set_online_resource(imported_record['onlineResources'])
+        dataciteJSONrecord.set_related_identifier(imported_record['relatedIdentifiers'])
+        dataciteJSONrecord.set_geolocation_box(imported_record['boundingBox'])
 
         return dataciteJSONrecord.record
 

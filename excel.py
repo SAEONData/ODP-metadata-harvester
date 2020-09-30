@@ -42,9 +42,9 @@ class ExcelImporter:
 
     def parse_raw_record(self, record):
 
-        # for col in record.keys():
-        #     if str(record[col]) == 'nan' or record[col] is None:
-        #         record[col] = None
+        for col in record.keys():
+            if str(record[col]) == 'nan' or record[col] is None:
+                record[col] = None
 
         # parse where necessary
         self.parse_file_identifier(record)
@@ -66,11 +66,11 @@ class ExcelImporter:
                                        ['northBoundLatitude', 'southBoundLatitude',
                                        'eastBoundLongitude', 'westBoundLongitude'],True)
         self.parse_field_to_dict(record,'verticalElement',['minimumValue','maximumValue','unitOfMeasure', 'verticalDatum'],True)
-        # self.parse_column_list(record,'size')
-        # self.parse_column_list(record,'fundingReferences')
-        # self.parse_listed_dict(record,'alternateIdentifiers')
-        # self.parse_time_field(record,'startTime')
-        # self.parse_time_field(record,'endTime')
+        self.parse_column_list(record,'size')
+        self.parse_listed_dict(record,'fundingReferences')
+        self.parse_listed_dict(record,'alternateIdentifiers')
+        self.parse_time_field(record,'startTime')
+        self.parse_time_field(record,'endTime')
 
     def parse_file_identifier(self, record):
         if type(record['fileIdentifier']) == float:
@@ -121,7 +121,7 @@ class ExcelImporter:
 
     def parse_listed_dict(self, record, field):
         if record[field] is None:
-            record[field] = ''
+            return
         else:
             resource = []
             raw_str = record[field]
@@ -170,7 +170,7 @@ class ExcelImporter:
     def parse_place_keywords(self, record, field_name, append_mode=False):
         descriptive_keywords = []
         if str(field_name) == "descriptiveKeywords":
-            if str(record[field_name]) == 'nan':
+            if record[field_name] is None:
                 return
             else:
                 detail={'keywordType':'theme','keyword':''}
@@ -186,7 +186,7 @@ class ExcelImporter:
                     record['descriptiveKeywords'] = record['descriptiveKeywords'] + descriptive_keywords
 
         elif str(field_name) == "instrumentKeywords (CV)":
-            if str(record[field_name]) == 'nan':
+            if record[field_name] is None:
                 return
             else:
                 raw_str = record[field_name]
@@ -200,7 +200,7 @@ class ExcelImporter:
                     record['descriptiveKeywords'] = record['descriptiveKeywords'] + descriptive_keywords
 
         elif str(field_name) == "placeKeywords (CV)":
-            if str(record[field_name]) == 'nan':
+            if record[field_name] is None:
                 return
             else:
                 raw_str = record[field_name]
@@ -221,8 +221,7 @@ class ExcelImporter:
 
     def parse_field_to_dict(self, record, field_name, valid_fields,all_fields=False):
         related_ids_str = record[field_name]
-        if str(related_ids_str) == "nan":
-            record[field_name] = None
+        if related_ids_str is None:
             return
         related_ids = {}
         #print(related_ids_str)
