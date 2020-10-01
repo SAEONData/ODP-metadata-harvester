@@ -6,9 +6,6 @@ class SANS1878SchemaGenerator(Schema):
     # Create a SANS1878 JSON record
     def __init__(self,record_id):
         super().__init__(record_id)
-
-    def begin_record(self):
-        # Create an empty SANS1878 record
         self.record = {}
         self.record["responsibleParties"] = []
         self.record["extent"] = {

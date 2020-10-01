@@ -28,15 +28,21 @@ class DataCiteSchemaGenerator(Schema):
             }]
 
     def set_publisher(self, publisher):
+        if not publisher:
+            raise dataCiteSchemaFormatError('Publisher cannot be blank',record_id=self.record_id)
         for party in publisher:
             if party['role'] == 'publisher':
                 self.record["publisher"] = party['organizationName']
 
     def set_publication_year(self, year):
+        if not year:
+            raise dataCiteSchemaFormatError('Publication year cannot be blank',record_id=self.record_id)
         self.record["publicationYear"] = year
 
 
     def set_creators(self,creator):
+        if not creator:
+            raise dataCiteSchemaFormatError('Creator cannot be blank',record_id=self.record_id)
         for person in creator:
             self.record['creators'].append(self.add_creators(person))
 
@@ -51,6 +57,8 @@ class DataCiteSchemaGenerator(Schema):
         }
 
     def set_subject(self,subjects):
+        if not subjects:
+            raise dataCiteSchemaFormatError('Subjects cannot be blank',record_id=self.record_id)
         for word in subjects:
             self.record['subjects'].append(self.add_subject(word,'general'))
 
@@ -106,11 +114,15 @@ class DataCiteSchemaGenerator(Schema):
         self.record["language"] = "en-US"
 
     def set_resource_type(self, type):
+        if not type:
+            raise dataCiteSchemaFormatError('Resource Type cannot be blank',record_id=self.record_id)
         self.record["resourceType"] = {
             "resourceTypeGeneral": type
         }
 
     def set_alternative_identifiers(self,alternateIdentifiers):
+        if not alternateIdentifiers:
+            raise dataCiteSchemaFormatError('Alternate Identifiers cannot be blank',record_id=self.record_id)
         for identifier in alternateIdentifiers:
             self.record['alternateIdentifiers'].append(self.add_alternateIdentifiers(identifier))
 
@@ -167,6 +179,8 @@ class DataCiteSchemaGenerator(Schema):
             self.record["version"] = version
 
     def set_rights_list(self, rights, rightsURI):
+        if not rights or rightsURI:
+            raise dataCiteSchemaFormatError('Rights or Rights URI cannot be blank',record_id=self.record_id)
         self.record["rightsList"] = [
             {
                 "rights": rights,
@@ -175,6 +189,8 @@ class DataCiteSchemaGenerator(Schema):
         ]
 
     def set_description(self, description):
+        if not description:
+            raise dataCiteSchemaFormatError('Description cannot be blank',record_id=self.record_id)
         self.record["descriptions"] = [
             {
                 "description": description,

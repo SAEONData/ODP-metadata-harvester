@@ -8,8 +8,7 @@ class builder:
 
     def build_sans_json_record(self,imported_record):
         #Inserts the contents of the imported SANS record into the JSON format
-        sansJSONrecord = SANS1878SchemaGenerator(imported_record['DOI']) #TODO: handle None type sent from records
-        sansJSONrecord.begin_record()
+        sansJSONrecord = SANS1878SchemaGenerator(imported_record['DOI'])
         sansJSONrecord.set_title(imported_record['title'])
         sansJSONrecord.set_date(imported_record['date'])
         sansJSONrecord.set_file_identifier(str(imported_record['fileIdentifier']))

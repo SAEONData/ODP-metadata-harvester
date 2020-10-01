@@ -18,8 +18,7 @@ class HarvestController:
                                                                  'marine-information-management-system-collection',
                                                                  'saeon-odp-4-2',
                                                                  record, capture_method='harvester',
-                                                                 data_agreement_url='https://www.environment.gov.za/branches/oceans_coast',
-                                                                 doi=record['identifier']['identifier'])
-
+                                                                 data_agreement_url='https://www.environment.gov.za/branches/oceans_coast')
+                print(result)
             except ODPException as e:
                 print(f"{e}: {e.error_detail}")
