@@ -24,7 +24,7 @@ class builder:
         sansJSONrecord.set_topic_categories(imported_record['topicCategories'])
         sansJSONrecord.set_spatial_resolution(imported_record['spatialResolution'])
         sansJSONrecord.set_abstract(imported_record['abstract'])
-        sansJSONrecord.add_distribution_format(imported_record['formatName'])
+        sansJSONrecord.set_distribution_format(imported_record['formatName'])
         sansJSONrecord.set_spatial_representation_type(imported_record['spatialRepresentationType'])
         sansJSONrecord.set_reference_system_name(imported_record['referenceSystemName'])
         sansJSONrecord.set_lineage_statement(imported_record['lineageStatement'])
@@ -34,14 +34,13 @@ class builder:
         sansJSONrecord.set_metadata_language(imported_record['languages'])
         sansJSONrecord.set_metadata_characterset('utf8')
         sansJSONrecord.set_metadata_time_stamp(imported_record['metadataTimestamp'])
-        sansJSONrecord.set_purpose("")
+        sansJSONrecord.set_purpose('')
         sansJSONrecord.set_scope(imported_record['scope'])
         sansJSONrecord.set_status([imported_record['status']])
-        sansJSONrecord.add_descriptiveKeywords(imported_record['descriptiveKeywords'])
-        sansJSONrecord.add_keywords(imported_record['keyword'])
+        sansJSONrecord.set_descriptive_keywords(imported_record['descriptiveKeywords'])
+        sansJSONrecord.set_keywords(imported_record['keyword'])
         sansJSONrecord.set_constraints(imported_record['rights'],imported_record['rightsURI'],imported_record['accessConstraints'])
         sansJSONrecord.set_related_identifiers(imported_record['relatedIdentifiers'])
-        sansJSONrecord.set_abstract(imported_record['abstract'])
         return sansJSONrecord.record
 
     def build_datacite_json_record(self,imported_record):
@@ -70,6 +69,5 @@ class builder:
         dataciteJSONrecord.set_online_resource(imported_record['onlineResources'])
         dataciteJSONrecord.set_related_identifier(imported_record['relatedIdentifiers'])
         dataciteJSONrecord.set_geolocation_box(imported_record['boundingBox'])
-
         return dataciteJSONrecord.record
 

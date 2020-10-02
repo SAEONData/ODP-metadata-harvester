@@ -54,8 +54,7 @@ class ExcelImporter:
 
         self.parse_column_list(record, 'keyword')
         self.parse_column_list(record, 'topicCategories')
-        self.parse_field_to_dict(record,'relatedIdentifiers',
-                                       ['relatedIdentifier', 'relatedIdentifierType', 'relationType'])
+        self.parse_listed_dict(record,'relatedIdentifiers')
         self.parse_listed_dict(record, 'onlineResources')
         self.parse_field_to_dict(record,'referenceSystemName',
                                        ['codeSpace', 'version'])
@@ -71,6 +70,17 @@ class ExcelImporter:
         self.parse_listed_dict(record,'alternateIdentifiers')
         self.parse_time_field(record,'startTime')
         self.parse_time_field(record,'endTime')
+        self.parse_time_field(record,'date')
+        self.parse_time_field(record,'metadataTimestamp')
+        self.parse_text_field(record,'abstract')
+
+    def parse_text_field(self, record, field):
+        imported_text = record[field]
+        if str(imported_text) == "nan":
+            record[field] = None
+            return
+        converted_text = imported_text.encode('utf-8', 'ignore')
+        record[field] = converted_text
 
     def parse_file_identifier(self, record):
         if type(record['fileIdentifier']) == float:
@@ -136,6 +146,8 @@ class ExcelImporter:
             record[field] = resource
 
     def parse_column_list(self, record, column):
+        if record[column] is None:
+            return
         if ',' in record[column]:
             keywords = record[column].split(',')
             record[column] = keywords

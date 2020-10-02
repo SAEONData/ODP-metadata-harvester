@@ -179,7 +179,7 @@ class DataCiteSchemaGenerator(Schema):
             self.record["version"] = version
 
     def set_rights_list(self, rights, rightsURI):
-        if not rights or rightsURI:
+        if not rights:
             raise dataCiteSchemaFormatError('Rights or Rights URI cannot be blank',record_id=self.record_id)
         self.record["rightsList"] = [
             {
