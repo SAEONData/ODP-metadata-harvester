@@ -9,13 +9,15 @@ class MetadataHarvest:
     def get_records(self):
         # Creates a list of JSON records in multiple metadata standards and file sources to the controller
         json_records = []
+        imported_records = []
         for imported_record in self.get_next_record():
             try:
                 json_builder = self.get_builder(imported_record)
                 json_records.append(json_builder)
+                imported_records.append(imported_record)
             except SchemaFormatError as e:
                 print(f'ERROR!!: record ID {e.record_id}:{e}')
-        return json_records
+        return json_records,imported_records;
 
     def get_builder(self, imported_record):
         recordBuilder = builder()
