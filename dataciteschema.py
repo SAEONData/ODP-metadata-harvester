@@ -37,7 +37,7 @@ class DataCiteSchemaGenerator(Schema):
     def set_publication_year(self, year):
         if not year:
             raise dataCiteSchemaFormatError('Publication year cannot be blank',record_id=self.record_id)
-        self.record["publicationYear"] = year
+        self.record["publicationYear"] = year.strftime("%Y")
 
 
     def set_creators(self,creator):
@@ -117,6 +117,7 @@ class DataCiteSchemaGenerator(Schema):
         if not type:
             raise dataCiteSchemaFormatError('Resource Type cannot be blank',record_id=self.record_id)
         self.record["resourceType"] = {
+            "resourceType": type,
             "resourceTypeGeneral": type
         }
 
@@ -163,20 +164,20 @@ class DataCiteSchemaGenerator(Schema):
         if datasize is None:
             pass
         else:
-            self.record['size'] = []
-            self.record['size'] = datasize
+            self.record['sizes'] = []
+            self.record['sizes'] = datasize
 
     def set_format(self, dataformat):
         if dataformat is None:
             pass
         else:
-            self.record["formats"] = dataformat
+            self.record["formats"] = [dataformat]
 
     def set_version(self,version):
         if version is None:
             pass
         else:
-            self.record["version"] = version
+            self.record["version"] = str(version)
 
     def set_rights_list(self, rights, rightsURI):
         if not rights:
@@ -193,7 +194,7 @@ class DataCiteSchemaGenerator(Schema):
             raise dataCiteSchemaFormatError('Description cannot be blank',record_id=self.record_id)
         self.record["descriptions"] = [
             {
-                "description": description,
+                "description": description.decode('ascii','replace'),
                 "descriptionType": "Abstract"
             }
         ]
@@ -204,9 +205,9 @@ class DataCiteSchemaGenerator(Schema):
         else:
             self.record["fundingReferences"] = []
             for funder in reference:
-                self.record["fundingReferences"] = {
+                self.record["fundingReferences"].append({
                     "funderName": funder['funder']
-                }
+                })
 
     def set_online_resource(self,online_resources):
         if online_resources is None:
@@ -243,12 +244,13 @@ class DataCiteSchemaGenerator(Schema):
             self.record['geoLocations'].append(self.add_geolocation_box(bounding_box))
 
     def add_geolocation_box(self,box):
-        return {
+        return {"geoLocationBox":
+            {
             "westBoundLongitude": box['westBoundLongitude'],
             "eastBoundLongitude": box['eastBoundLongitude'],
             "southBoundLatitude": box['southBoundLatitude'],
             "northBoundLatitude": box['northBoundLatitude']
-        }
+        }}
 
     # def set_originalMetadata(self,):
     #     self.record"originalMetadata": "<?xml version=\"1.0\"?><resource>...the original metadata...</resource>"
