@@ -138,15 +138,16 @@ class SANS1878SchemaGenerator(Schema):
 
     def set_spatial_resolution(self, resolution):
         if not resolution:
-            warnings.warn('spatialResolution should not be blank')
             self.record["spatialResolution"] = ''
+            warnings.warn(f'Record:{self.record_id}: Spatial should not be blank')
             return
         self.record["spatialResolution"] = resolution
 
     def set_abstract(self, abstract):
         if not abstract:
             raise SANSSchemaFormatError('Abstract cannot be blank',record_id=self.record_id)
-        self.record["abstract"] = abstract.decode('ascii', 'replace')
+        self.record["abstract"] = abstract.decode()
+
 
     def set_distribution_format(self, format_name, format_version=None):
         if not format_name:
@@ -174,7 +175,7 @@ class SANS1878SchemaGenerator(Schema):
     def set_lineage_statement(self, lineage):
         if not lineage:
             raise SANSSchemaFormatError('lineageStatement cannot be blank',record_id=self.record_id)
-        self.record["lineageStatement"] = lineage
+        self.record["lineageStatement"] = lineage.decode()
 
     def add_online_resources(self, onlineResources):
         if not onlineResources:
@@ -186,7 +187,7 @@ class SANS1878SchemaGenerator(Schema):
                 online_resource = {
                     "name": resource['name'].strip(),
                     "description": resource['description'].strip(),
-                    "linkage": resource['linkage']
+                    "linkage": resource['linkage'].strip()
                 }
                 self.record["onlineResources"].append(online_resource)
 
@@ -228,8 +229,8 @@ class SANS1878SchemaGenerator(Schema):
 
     def set_purpose(self, purpose):
         if not purpose:
-            warnings.warn('purpose cannot be blank')
             self.record["purpose"] = ''
+            warnings.warn(f'{self.record_id}: Purpose should not be blank')
             return
         self.record["purpose"] = purpose
 

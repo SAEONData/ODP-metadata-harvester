@@ -33,6 +33,5 @@ class HarvestController:
                                                                      post_rec, capture_method='harvester',
                                                                      data_agreement_url='https://www.environment.gov.za/branches/oceans_coast')
                     pprint.pprint(result['errors'],indent=4)
-
             except ODPException as e:
                 print(f"{e}: {e.error_detail}")

@@ -73,13 +73,14 @@ class ExcelImporter:
         self.parse_time_field(record,'date')
         self.parse_time_field(record,'metadataTimestamp')
         self.parse_text_field(record,'abstract')
+        self.parse_text_field(record,'lineageStatement')
 
     def parse_text_field(self, record, field):
         imported_text = record[field]
-        if str(imported_text) == "nan":
+        if str(imported_text) == "nan" or imported_text is None:
             record[field] = None
             return
-        converted_text = imported_text.encode('utf-8', 'ignore')
+        converted_text = imported_text.encode()
         record[field] = converted_text
 
     def parse_file_identifier(self, record):

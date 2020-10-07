@@ -1,4 +1,4 @@
-class SchemaFormatError(Exception):
+class SchemaFormatError(Warning):
     def __init__(self, *args, **kwargs):
         self.record_id = kwargs.pop('record_id','')
 
