@@ -23,12 +23,12 @@ class SANS1878SchemaGenerator(Schema):
 
     def set_title(self, title):
         if not title:
-            raise SANSSchemaFormatError('Title cannot be blank',record_id=self.record_id)
+            raise SANSSchemaFormatError('Title is empty, record not posted',record_id=self.record_id)
         self.record["title"] = title
 
     def set_date(self, date):
-        if not isinstance(date,datetime):
-            raise SANSSchemaFormatError('date needs to be datetime',record_id=self.record_id)
+        if not date:
+            raise SANSSchemaFormatError('date is empty, record not posted',record_id=self.record_id)
         self.record["date"] = date.strftime("%Y-%2m-%2d")
 
     def add_responsible_party(self, name='', organization='', contact_info='', role='', position_name='',
@@ -45,7 +45,7 @@ class SANS1878SchemaGenerator(Schema):
 
     def set_responsible_party(self, responsible_parties_array):
         if not responsible_parties_array:
-            raise SANSSchemaFormatError('Responsible parties cannot be blank',record_id=self.record_id)
+            raise SANSSchemaFormatError('Responsible parties is empty, record not posted',record_id=self.record_id)
         role_fixes = {'': '', 'resourceprovider': 'resourceProvider', 'custodian': 'custodian', 'owner': 'owner',
                       'user': 'user', 'distributor': 'distributor', 'originator': 'originator',
                       'pointofcontact': 'pointOfContact', 'principleinvestigator': 'principalInvestigator',
@@ -65,12 +65,14 @@ class SANS1878SchemaGenerator(Schema):
                                        rparty['positionName'])  # , online_resource)
 
     def set_geographic_identifier(self, identifier):
-        if str(identifier) == 'nan':
-            self.record["extent"]["geographicElements"][0]["geographicIdentifier"] = ''
+        if not identifier:
+            raise SANSSchemaFormatError('Geographic Identifier is empty, record not posted',record_id=self.record_id)
         else:
             self.record["extent"]["geographicElements"][0]["geographicIdentifier"] = identifier
 
     def set_bounding_box_extent(self, bounding_box):
+        if not bounding_box:
+            raise SANSSchemaFormatError('Bounding Box is empty, record not posted', record_id=self.record_id)
         box = {
             "westBoundLongitude": float(bounding_box['westBoundLongitude']),
             "eastBoundLongitude": float(bounding_box['eastBoundLongitude']),
@@ -80,9 +82,11 @@ class SANS1878SchemaGenerator(Schema):
         self.record["extent"]["geographicElements"][0]["boundingBox"] = box
 
     def add_bounding_polygon(self, polygon):
+        if not polygon:
+            warnings.warn(f'{self.record_id}: Bounding polygon is empty, continuing with record')
+            return
         if type(polygon) != list or len(polygon) < 5:
             raise SANSSchemaFormatError("Invalid polygon type, must be a list with 5 elements")
-
         valid_keys = ['longitude', 'latitude']
         for point in polygon:
             if type(point) != dict:
@@ -94,27 +98,25 @@ class SANS1878SchemaGenerator(Schema):
         self.record["extent"]["geographicElements"][0]["boundingPolygon"].append(polygon)
 
     def set_vertical_extent(self, vertical_elements):
-
-        minimum_value = vertical_elements['minimumValue']
-        maximum_value = vertical_elements['maximumValue']
-        unit_of_measure = vertical_elements['unitOfMeasure']
-        vertical_datum = vertical_elements['verticalDatum']
+        if not vertical_elements:
+            warnings.warn(f'{self.record_id}: Vertical elements is empty, continuing with record')
+            return
         vertical_extent = {
-            "minimumValue": float(minimum_value),
-            "maximumValue": float(maximum_value),
-            "unitOfMeasure": unit_of_measure,
-            "verticalDatum": vertical_datum
+            "minimumValue": float(vertical_elements['minimumValue']),
+            "maximumValue": float(vertical_elements['maximumValue']),
+            "unitOfMeasure": vertical_elements['unitOfMeasure'],
+            "verticalDatum": vertical_elements['verticalDatum']
         }
         self.record["extent"]["verticalElement"] = vertical_extent
 
     def set_temporal_extent(self, start_time, end_time):
-        start_time_str = self.convert_date(start_time)
-        end_time_str = self.convert_date(end_time)
-        if type(start_time_str) != datetime or type(end_time_str) != datetime:
+        if not start_time or not end_time:
+            raise SANSSchemaFormatError('Topic categories is empty, record not posted',record_id=self.record_id)
+        if type(start_time) != datetime or type(end_time) != datetime:
             raise SANSSchemaFormatError("Invalid start/end time type, must be a datetime")
         format = "%Y-%2m-%2dT%H:%M:%S"
-        start_time_str = start_time_str.strftime(format) + "+02:00"
-        end_time_str = end_time_str.strftime(format) + "+02:00"
+        start_time_str = start_time.strftime(format) + "+02:00"
+        end_time_str = end_time.strftime(format) + "+02:00"
         temporal_extent = {
             "startTime": start_time_str,
             "endTime": end_time_str
@@ -123,35 +125,34 @@ class SANS1878SchemaGenerator(Schema):
 
     def set_languages(self, language):
         if not language:
-            raise SANSSchemaFormatError('Language cannot be blank',record_id=self.record_id)
+            raise SANSSchemaFormatError('Language is empty, record not posted',record_id=self.record_id)
         self.record["languages"] = [language]
 
     def set_characterset(self, characterset):
         if not characterset:
-            raise SANSSchemaFormatError('characterSet cannot be blank',record_id=self.record_id)
+            raise SANSSchemaFormatError('characterSet is empty, record not posted',record_id=self.record_id)
         self.record["characterSet"] = characterset
 
     def set_topic_categories(self, categories):
         if not categories:
-            raise SANSSchemaFormatError('Topic categories cannot be blank',record_id=self.record_id)
+            raise SANSSchemaFormatError('Topic categories is empty, record not posted',record_id=self.record_id)
         self.record["topicCategories"] = categories
 
     def set_spatial_resolution(self, resolution):
         if not resolution:
             self.record["spatialResolution"] = ''
-            warnings.warn(f'Record:{self.record_id}: Spatial should not be blank')
+            warnings.warn(f'Record:{self.record_id}: Spatial Resolution is empty, continuing with record')
             return
         self.record["spatialResolution"] = resolution
 
     def set_abstract(self, abstract):
         if not abstract:
-            raise SANSSchemaFormatError('Abstract cannot be blank',record_id=self.record_id)
+            raise SANSSchemaFormatError('Abstract is empty, record not posted',record_id=self.record_id)
         self.record["abstract"] = abstract.decode()
-
 
     def set_distribution_format(self, format_name, format_version=None):
         if not format_name:
-            raise SANSSchemaFormatError('Distribution format cannot be blank',record_id=self.record_id)
+            raise SANSSchemaFormatError('Distribution format is empty, record not posted',record_id=self.record_id)
         format = {"formatName": format_name}
         # if format_version != list:
         #     raise SANSSchemaFormatError("Invalid distribution format type, must be a list")
@@ -161,25 +162,25 @@ class SANS1878SchemaGenerator(Schema):
     def set_spatial_representation_type(self, represenation):
         if not represenation:
             raise SANSSchemaFormatError('spatialRepresentation cannot be blank', record_id=self.record_id)
-        else:
-            rep_type_fixes = {'': '', 'vector': 'vector', 'grid': 'grid', \
-                              'texttable': 'textTable', 'tin': 'tin', 'stereomodel': 'stereoModel', \
-                              'video': 'video', 'image': 'image'}
-            self.record["spatialRepresentationTypes"] = [rep_type_fixes[represenation.lower()]]
+        return
+        rep_type_fixes = {'': '', 'vector': 'vector', 'grid': 'grid', \
+                          'texttable': 'textTable', 'tin': 'tin', 'stereomodel': 'stereoModel', \
+                          'video': 'video', 'image': 'image'}
+        self.record["spatialRepresentationTypes"] = [rep_type_fixes[represenation.lower()]]
 
     def set_reference_system_name(self, reference):
         if not reference:
-            raise SANSSchemaFormatError('referenceSystemName cannot be blank',record_id=self.record_id)
+            raise SANSSchemaFormatError('referenceSystemName is empty, record not posted',record_id=self.record_id)
         self.record["referenceSystemName"] = {"codeSpace": reference['codeSpace'], "version": reference['version']}
 
     def set_lineage_statement(self, lineage):
         if not lineage:
-            raise SANSSchemaFormatError('lineageStatement cannot be blank',record_id=self.record_id)
+            raise SANSSchemaFormatError('lineageStatement is empty, record not posted',record_id=self.record_id)
         self.record["lineageStatement"] = lineage.decode()
 
     def add_online_resources(self, onlineResources):
         if not onlineResources:
-            raise SANSSchemaFormatError('onlineResource cannot be blank',record_id=self.record_id)
+            raise SANSSchemaFormatError('onlineResource is empty, record not posted',record_id=self.record_id)
         for resource in onlineResources:
             if str(resource) == 'nan':
                 self.record["onlineResources"] = ''
@@ -193,27 +194,27 @@ class SANS1878SchemaGenerator(Schema):
 
     def set_file_identifier(self, file_identifier):
         if not file_identifier:
-            raise SANSSchemaFormatError('File Identifier cannot be blank',record_id=self.record_id)
+            raise SANSSchemaFormatError('File Identifier is empty, record not posted',record_id=self.record_id)
         self.record["fileIdentifier"] = file_identifier
 
     def set_metadata_standard_name(self, metadata_standard):
         if not metadata_standard:
-            raise SANSSchemaFormatError('metadataStandardName cannot be blank',record_id=self.record_id)
+            raise SANSSchemaFormatError('metadataStandardName is empty, record not posted',record_id=self.record_id)
         self.record["metadataStandardName"] = metadata_standard
 
     def set_metadata_standard_version(self, standard_version):
         if not standard_version:
-            raise SANSSchemaFormatError('metadataStandardVersion cannot be blank',record_id=self.record_id)
+            raise SANSSchemaFormatError('metadataStandardVersion is empty, record not posted',record_id=self.record_id)
         self.record["metadataStandardVersion"] = str(standard_version)
 
     def set_metadata_language(self, language):
         if not language:
-            raise SANSSchemaFormatError('metadataLanguage cannot be blank',record_id=self.record_id)
+            raise SANSSchemaFormatError('metadataLanguage is empty, record not posted',record_id=self.record_id)
         self.record["metadataLanguage"] = language
 
     def set_metadata_characterset(self, characterset):
         if not characterset:
-            raise SANSSchemaFormatError('metadataCharacterSet cannot be blank',record_id=self.record_id)
+            raise SANSSchemaFormatError('metadataCharacterSet is empty, record not posted',record_id=self.record_id)
         self.record["metadataCharacterSet"] = characterset
 
     def set_metadata_time_stamp(self, timestamp):
@@ -230,23 +231,26 @@ class SANS1878SchemaGenerator(Schema):
     def set_purpose(self, purpose):
         if not purpose:
             self.record["purpose"] = ''
-            warnings.warn(f'{self.record_id}: Purpose should not be blank')
+            warnings.warn(f'{self.record_id}: Purpose is empty, continuing with record')
             return
         self.record["purpose"] = purpose
 
     def set_scope(self, scope):
         if not scope:
-            raise SANSSchemaFormatError('scope cannot be blank', record_id=self.record_id)
+            raise SANSSchemaFormatError('scope is empty, record not posted',record_id=self.record_id)
         self.record["scope"] = scope
 
     def set_status(self, status):
         if not status:
-            raise SANSSchemaFormatError('status cannot be blank', record_id=self.record_id)
+            raise SANSSchemaFormatError('status is empty, record not posted',record_id=self.record_id)
         if type(status) != list:
             raise SANSSchemaFormatError("Invalid status type, must be a list")
         self.record["status"] = status
 
     def set_keywords(self, keywords):
+        if not keywords:
+            warnings.warn(f'{self.record_id}: Keywords is empty, continuing with record')
+            return
         for word in keywords:
             self.record["descriptiveKeywords"].append({
                 "keywordType": 'general',
@@ -254,7 +258,8 @@ class SANS1878SchemaGenerator(Schema):
             })
 
     def set_descriptive_keywords(self, keywordArray):
-        if keywordArray is None:
+        if not keywordArray:
+            warnings.warn(f'{self.record_id}: Descriptive Keywords is empty, continuing with record')
             return
         else:
             for word in keywordArray:
@@ -266,7 +271,7 @@ class SANS1878SchemaGenerator(Schema):
     def set_constraints(self, rights, rights_uri, access_constraints, use_constraints='', classification='',
                         use_limitations=''):
         if not rights:
-            raise SANSSchemaFormatError("Invalid use_constraints type, must be a list")
+            raise SANSSchemaFormatError('Constraints is empty, record not posted',record_id=self.record_id)
         self.record["constraints"] = [{
             "rights": rights,
             "rightsURI": rights_uri,
@@ -277,7 +282,8 @@ class SANS1878SchemaGenerator(Schema):
 
     def set_related_identifiers(self, related_identifiers_array):
         if not related_identifiers_array:
-            raise SANSSchemaFormatError('relatedIdentifier cannot be blank', record_id=self.record_id)
+            warnings.warn(f'{self.record_id}: Related Identifiers is empty, continuing with record')
+            return
         for related in related_identifiers_array:
              related_identifiers = {
                 "relatedIdentifier": related['relatedIdentifier'].strip(),
