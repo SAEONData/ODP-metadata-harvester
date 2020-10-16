@@ -2,6 +2,10 @@ import datetime
 from sansschema import SANS1878SchemaGenerator
 from dataciteschema import DataCiteSchemaGenerator
 
+class builderError(Exception):
+    def __init__(self):
+        pass
+
 class builder:
     def __init__(self):
         pass
@@ -46,7 +50,7 @@ class builder:
     def build_datacite_json_record(self,imported_record):
         # Inserts the contents of the imported record into the datacite JSON format
         dataciteJSONrecord = DataCiteSchemaGenerator(imported_record['DOI'])
-
+        dataciteJSONrecord.set_identifier(imported_record['DOI'])
         #required fields
         dataciteJSONrecord.set_title(imported_record['title'])
         dataciteJSONrecord.set_publisher(imported_record['responsibleParties.Publisher'])
@@ -58,7 +62,7 @@ class builder:
         dataciteJSONrecord.set_description(imported_record['abstract'])
         dataciteJSONrecord.set_alternative_identifiers(imported_record['alternateIdentifiers'])
         #optional fields
-        dataciteJSONrecord.set_identifier(imported_record['DOI'])
+
         dataciteJSONrecord.set_language()
         dataciteJSONrecord.set_contributor(imported_record['responsibleParties.1'])
         dataciteJSONrecord.set_time(imported_record['startTime'],imported_record['endTime'])

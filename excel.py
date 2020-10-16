@@ -34,7 +34,7 @@ class ExcelImporter:
                     self.parse_raw_record(raw_record)
                     raw_records.append(raw_record)
                 except RecordParseError as e:
-                    print("{}    Record id: {}".format(e, raw_record['fileIdentifier']))
+                    print("{}Record id: {}".format(e, raw_record['fileIdentifier']))
         except Exception as e:
             print("Error while reading excel speadsheet. {}".format(e))
             #traceback.print_exc(file=sys.stdout)
@@ -184,6 +184,7 @@ class ExcelImporter:
         descriptive_keywords = []
         if str(field_name) == "descriptiveKeywords":
             if record[field_name] is None:
+                record['descriptiveKeywords'] = descriptive_keywords
                 return
             else:
                 detail={'keywordType':'theme','keyword':''}
@@ -259,15 +260,15 @@ class ExcelImporter:
 
     def parse_time_field(self,record,field_name):
         imported_time = record[field_name]
-        if str(imported_time) == "nan":
+        if str(imported_time) == "nan" or imported_time is None:
             record[field_name] = None
             return
         converted_time = self.convert_date(imported_time)
         record[field_name] = converted_time
 
     def convert_date(self, date_input):
-        supported_formats = ["%Y-%m-%d", "%d-%m-%Y", '%Y', "%Y/%m/%d %H:%M",
-                             "%Y-%m-%d %H:%M:%S"]
+        supported_formats = ['%Y-%m-%d', '%d-%m-%Y', '%Y', '%Y/%m/%d %H:%M',
+                             '%Y-%m-%d %H:%M:%S']
         for fmt in supported_formats:
             try:
                 return datetime.strptime(str(date_input), fmt)

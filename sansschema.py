@@ -161,7 +161,7 @@ class SANS1878SchemaGenerator(Schema):
 
     def set_spatial_representation_type(self, represenation):
         if not represenation:
-            raise SANSSchemaFormatError('spatialRepresentation cannot be blank', record_id=self.record_id)
+            raise SANSSchemaFormatError('spatialRepresentationType cannot be blank', record_id=self.record_id)
         return
         rep_type_fixes = {'': '', 'vector': 'vector', 'grid': 'grid', \
                           'texttable': 'textTable', 'tin': 'tin', 'stereomodel': 'stereoModel', \

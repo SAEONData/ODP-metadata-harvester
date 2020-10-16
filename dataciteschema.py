@@ -120,7 +120,7 @@ class DataCiteSchemaGenerator(Schema):
 
     def set_resource_type(self, type):
         if not type:
-            raise dataCiteSchemaFormatError('Resource Type is empty, record not posted',record_id=self.record_id)
+            raise dataCiteSchemaFormatError('ResourceType is empty, record not posted',record_id=self.record_id)
         self.record["resourceType"] = {
             "resourceType": type,
             "resourceTypeGeneral": type

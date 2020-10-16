@@ -1,6 +1,7 @@
 import metadataimporter
 from schema import SchemaFormatError
 from builder import builder
+from builder import builderError
 class MetadataHarvest:
 
     def __init__(self):
@@ -16,7 +17,7 @@ class MetadataHarvest:
                 json_records.append(json_builder)
                 imported_records.append(imported_record)
             except SchemaFormatError as e:
-                print(f'ERROR!!: record ID {e.record_id}:{e}')
+                print(f'!Schema ERROR!: record ID {e.record_id}:{e}')
         return json_records,imported_records;
 
     def get_builder(self, imported_record):
@@ -25,14 +26,16 @@ class MetadataHarvest:
         if imported_record['metadataStandardName'] == 'Datacite':
             dataciteBuilder = recordBuilder.build_datacite_json_record(imported_record)
             return dataciteBuilder
-        if imported_record['metadataStandardName'] == 'SANS 1878':
+        elif imported_record['metadataStandardName'] == 'SANS 1878':
             sansBuilder = recordBuilder.build_sans_json_record(imported_record)
             return sansBuilder
+        else:
+            raise builderError('Builder not available')
 
     def get_next_record(self):
         #Returns a list of JSON records from a file
         importer = metadataimporter.MetadataImport()
-        imported_records = importer.create_importer(filename='excel_sheets/T_Lamont_PEI_Bulk_data_submission.xlsx')
+        imported_records = importer.create_importer(filename='excel_sheets/weather_metadata_mims_harvest.xlsx')
         return imported_records
         # implement in concrete importer class
         #raise NotImplementedError

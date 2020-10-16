@@ -11,7 +11,7 @@ class MetadataImport:
         #Creates an importer based on the file type
         fileExtension = os.path.splitext(filename)[1]
         if fileExtension == '.xlsx':
-            sheet = 'test'
+            sheet = 'harvester'
             excel_importer = excel.ExcelImporter()
             records = excel_importer.read_excel_to_json(filename,sheet)
             return records
