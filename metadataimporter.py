@@ -1,4 +1,6 @@
 import os.path
+import os
+
 import excel
 class MetadataImport:
     def __init__(self):
@@ -11,8 +13,11 @@ class MetadataImport:
         #Creates an importer based on the file type
         fileExtension = os.path.splitext(filename)[1]
         if fileExtension == '.xlsx':
-            sheet = 'harvester'
+            sheet = os.environ['SHEET_NAME']
             excel_importer = excel.ExcelImporter()
             records = excel_importer.read_excel_to_json(filename,sheet)
             return records
+        else:
+            raise Exception('No importer created, no filename provided')
+
 

@@ -2,6 +2,8 @@ import metadataimporter
 from schema import SchemaFormatError
 from builder import builder
 from builder import builderError
+import os
+
 class MetadataHarvest:
 
     def __init__(self):
@@ -35,7 +37,7 @@ class MetadataHarvest:
     def get_next_record(self):
         #Returns a list of JSON records from a file
         importer = metadataimporter.MetadataImport()
-        imported_records = importer.create_importer(filename='excel_sheets/weather_metadata_mims_harvest.xlsx')
+        imported_records = importer.create_importer(filename=os.environ['FILE_NAME'])
         return imported_records
         # implement in concrete importer class
         #raise NotImplementedError

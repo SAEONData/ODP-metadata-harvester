@@ -50,7 +50,7 @@ class builder:
     def build_datacite_json_record(self,imported_record):
         # Inserts the contents of the imported record into the datacite JSON format
         dataciteJSONrecord = DataCiteSchemaGenerator(imported_record['DOI'])
-        dataciteJSONrecord.set_identifier(imported_record['DOI'])
+        dataciteJSONrecord.set_DOI(imported_record['DOI'])
         #required fields
         dataciteJSONrecord.set_title(imported_record['title'])
         dataciteJSONrecord.set_publisher(imported_record['responsibleParties.Publisher'])
@@ -60,10 +60,11 @@ class builder:
         dataciteJSONrecord.set_resource_type(imported_record['scope'])
         dataciteJSONrecord.set_rights_list(imported_record['rights'],imported_record['rightsURI'])
         dataciteJSONrecord.set_description(imported_record['abstract'])
-        dataciteJSONrecord.set_alternative_identifiers(imported_record['alternateIdentifiers'])
+        dataciteJSONrecord.set_identifier(imported_record['alternateIdentifiers'])
         #optional fields
 
         dataciteJSONrecord.set_language()
+        dataciteJSONrecord.set_schema_version()
         dataciteJSONrecord.set_contributor(imported_record['responsibleParties.1'])
         dataciteJSONrecord.set_time(imported_record['startTime'],imported_record['endTime'])
         dataciteJSONrecord.set_funding_reference(imported_record['fundingReferences'])

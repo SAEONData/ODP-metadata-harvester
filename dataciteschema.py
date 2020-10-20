@@ -11,14 +11,18 @@ class DataCiteSchemaGenerator(Schema):
         self.record['creators'] = []
         self.record['subjects'] = []
         self.record["dates"] = []
-        self.record['alternateIdentifiers'] = []
 
-    def set_identifier(self, identifier):
+    def set_DOI(self,DOI):
+        if not DOI:
+            raise dataCiteSchemaFormatError('Identifier is empty, record not posted', record_id=self.record_id)
+        self.record['doi'] = DOI
+
+    def set_identifier(self, identifier,identifierType):
         if not identifier:
-            raise dataCiteSchemaFormatError('Identifier is empty, record not posted',record_id=self.record_id)
+            warnings.warn(f'Record:{self.record_id}: identifiers is empty, continuing with record')
         self.record["identifier"] = {
             "identifier": identifier,
-            "identifierType": "DOI"
+            "identifierType": identifierType
         }
 
     def set_title(self, title):
@@ -120,22 +124,10 @@ class DataCiteSchemaGenerator(Schema):
 
     def set_resource_type(self, type):
         if not type:
-            raise dataCiteSchemaFormatError('ResourceType is empty, record not posted',record_id=self.record_id)
-        self.record["resourceType"] = {
+            raise dataCiteSchemaFormatError('Types is empty, record not posted',record_id=self.record_id)
+        self.record["Types"] = {
             "resourceType": type,
             "resourceTypeGeneral": type
-        }
-
-    def set_alternative_identifiers(self,alternateIdentifiers):
-        if not alternateIdentifiers:
-            raise dataCiteSchemaFormatError('Alternate Identifiers is empty, record not posted',record_id=self.record_id)
-        for identifier in alternateIdentifiers:
-            self.record['alternateIdentifiers'].append(self.add_alternateIdentifiers(identifier))
-
-    def add_alternateIdentifiers(self, alternate):
-        return {
-            "alternateIdentifier": alternate['identifier'],
-            "alternateIdentifierType": alternate['identifierType']
         }
 
     def set_related_identifier(self,related):
@@ -251,11 +243,13 @@ class DataCiteSchemaGenerator(Schema):
     def add_geolocation_box(self,box):
         return {"geoLocationBox":
             {
-            "westBoundLongitude": box['westBoundLongitude'],
-            "eastBoundLongitude": box['eastBoundLongitude'],
-            "southBoundLatitude": box['southBoundLatitude'],
-            "northBoundLatitude": box['northBoundLatitude']
+            "westBoundLongitude": float(box['westBoundLongitude']),
+            "eastBoundLongitude": float(box['eastBoundLongitude']),
+            "southBoundLatitude": float(box['southBoundLatitude']),
+            "northBoundLatitude": float(box['northBoundLatitude'])
         }}
+    def set_schema_version(self):
+        self.record['schemaVersion'] = "http://datacite.org/schema/kernel-4"
 
     def get_filled_schema(self):
         return self.record
