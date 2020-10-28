@@ -23,12 +23,14 @@ class SANS1878SchemaGenerator(Schema):
 
     def set_title(self, title):
         if not title:
-            raise SANSSchemaFormatError('Title is empty, record not posted',record_id=self.record_id)
+            warnings.warn(f'Record:{self.record_id}- Mandatory field: Title is empty')
+            return
         self.record["title"] = title
 
     def set_date(self, date):
         if not date:
-            raise SANSSchemaFormatError('date is empty, record not posted',record_id=self.record_id)
+            warnings.warn(f'Record:{self.record_id}- Mandatory field: date is empty')
+            return
         self.record["date"] = date.strftime("%Y-%2m-%2d")
 
     def add_responsible_party(self, name='', organization='', contact_info='', role='', position_name='',
@@ -45,7 +47,8 @@ class SANS1878SchemaGenerator(Schema):
 
     def set_responsible_party(self, responsible_parties_array):
         if not responsible_parties_array:
-            raise SANSSchemaFormatError('Responsible parties is empty, record not posted',record_id=self.record_id)
+            warnings.warn(f'Record:{self.record_id}- Mandatory field: Responsible Parties is empty')
+            return
         role_fixes = {'': '', 'resourceprovider': 'resourceProvider', 'custodian': 'custodian', 'owner': 'owner',
                       'user': 'user', 'distributor': 'distributor', 'originator': 'originator',
                       'pointofcontact': 'pointOfContact', 'principleinvestigator': 'principalInvestigator',
@@ -66,13 +69,15 @@ class SANS1878SchemaGenerator(Schema):
 
     def set_geographic_identifier(self, identifier):
         if not identifier:
-            raise SANSSchemaFormatError('Geographic Identifier is empty, record not posted',record_id=self.record_id)
+            warnings.warn(f'Record:{self.record_id}: Mandatory Geographic Identifier field is empty')
+            return
         else:
             self.record["extent"]["geographicElements"][0]["geographicIdentifier"] = identifier
 
     def set_bounding_box_extent(self, bounding_box):
         if not bounding_box:
-            raise SANSSchemaFormatError('Bounding Box is empty, record not posted', record_id=self.record_id)
+            warnings.warn(f'Record:{self.record_id}: Mandatory Bounding Box field is empty')
+            return
         box = {
             "westBoundLongitude": float(bounding_box['westBoundLongitude']),
             "eastBoundLongitude": float(bounding_box['eastBoundLongitude']),
@@ -111,7 +116,8 @@ class SANS1878SchemaGenerator(Schema):
 
     def set_temporal_extent(self, start_time, end_time):
         if not start_time or not end_time:
-            raise SANSSchemaFormatError('Topic categories is empty, record not posted',record_id=self.record_id)
+            warnings.warn(f'Record:{self.record_id}: Mandatory start_time or end_time field is empty')
+            return
         if type(start_time) != datetime or type(end_time) != datetime:
             raise SANSSchemaFormatError("Invalid start/end time type, must be a datetime")
         format = "%Y-%2m-%2dT%H:%M:%S"
@@ -125,17 +131,20 @@ class SANS1878SchemaGenerator(Schema):
 
     def set_languages(self, language):
         if not language:
-            raise SANSSchemaFormatError('Language is empty, record not posted',record_id=self.record_id)
+            warnings.warn(f'Record:{self.record_id}: Mandatory language field is empty')
+            return
         self.record["languages"] = [language]
 
     def set_characterset(self, characterset):
         if not characterset:
-            raise SANSSchemaFormatError('characterSet is empty, record not posted',record_id=self.record_id)
+            warnings.warn(f'Record:{self.record_id}: Mandatory character set field is empty')
+            return
         self.record["characterSet"] = characterset
 
     def set_topic_categories(self, categories):
         if not categories:
-            raise SANSSchemaFormatError('Topic categories is empty, record not posted',record_id=self.record_id)
+            warnings.warn(f'Record:{self.record_id}: Mandatory topic categories set field is empty')
+            return
         self.record["topicCategories"] = categories
 
     def set_spatial_resolution(self, resolution):
@@ -147,12 +156,14 @@ class SANS1878SchemaGenerator(Schema):
 
     def set_abstract(self, abstract):
         if not abstract:
-            raise SANSSchemaFormatError('Abstract is empty, record not posted',record_id=self.record_id)
+            warnings.warn(f'Record:{self.record_id}: Mandatory abstract set field is empty')
+            return
         self.record["abstract"] = abstract.decode()
 
     def set_distribution_format(self, format_name, format_version=None):
         if not format_name:
-            raise SANSSchemaFormatError('Distribution format is empty, record not posted',record_id=self.record_id)
+            warnings.warn(f'Record:{self.record_id}: Mandatory distribution format set field is empty')
+            return
         format = {"formatName": format_name}
         # if format_version != list:
         #     raise SANSSchemaFormatError("Invalid distribution format type, must be a list")
@@ -161,7 +172,8 @@ class SANS1878SchemaGenerator(Schema):
 
     def set_spatial_representation_type(self, represenation):
         if not represenation:
-            raise SANSSchemaFormatError('spatialRepresentationType cannot be blank', record_id=self.record_id)
+            warnings.warn(f'Record:{self.record_id}: Mandatory spatial resolution type field is empty')
+            return
         return
         rep_type_fixes = {'': '', 'vector': 'vector', 'grid': 'grid', \
                           'texttable': 'textTable', 'tin': 'tin', 'stereomodel': 'stereoModel', \
@@ -170,17 +182,18 @@ class SANS1878SchemaGenerator(Schema):
 
     def set_reference_system_name(self, reference):
         if not reference:
-            raise SANSSchemaFormatError('referenceSystemName is empty, record not posted',record_id=self.record_id)
+            warnings.warn(f'Record:{self.record_id}: Mandatory reference system name field is empty')
+            return
         self.record["referenceSystemName"] = {"codeSpace": reference['codeSpace'], "version": reference['version']}
 
     def set_lineage_statement(self, lineage):
         if not lineage:
-            raise SANSSchemaFormatError('lineageStatement is empty, record not posted',record_id=self.record_id)
+            warnings.warn(f'Record:{self.record_id}: Mandatory lineage field is empty')
         self.record["lineageStatement"] = lineage.decode()
 
     def add_online_resources(self, onlineResources):
         if not onlineResources:
-            raise SANSSchemaFormatError('onlineResource is empty, record not posted',record_id=self.record_id)
+            warnings.warn(f'Record:{self.record_id}: Mandatory online resource field is empty')
         for resource in onlineResources:
             if str(resource) == 'nan':
                 self.record["onlineResources"] = ''
@@ -194,32 +207,36 @@ class SANS1878SchemaGenerator(Schema):
 
     def set_file_identifier(self, file_identifier):
         if not file_identifier:
-            raise SANSSchemaFormatError('File Identifier is empty, record not posted',record_id=self.record_id)
+            raise SANSSchemaFormatError('File Identifier is empty, record NOT posted',record_id=self.record_id)
         self.record["fileIdentifier"] = file_identifier
 
     def set_metadata_standard_name(self, metadata_standard):
         if not metadata_standard:
-            raise SANSSchemaFormatError('metadataStandardName is empty, record not posted',record_id=self.record_id)
+            warnings.warn(f'Record:{self.record_id}: Mandatory metadata standard name field is empty')
+            return
         self.record["metadataStandardName"] = metadata_standard
 
     def set_metadata_standard_version(self, standard_version):
         if not standard_version:
-            raise SANSSchemaFormatError('metadataStandardVersion is empty, record not posted',record_id=self.record_id)
+            warnings.warn(f'Record:{self.record_id}: Mandatory metadata standard version field is empty')
+            return
         self.record["metadataStandardVersion"] = str(standard_version)
 
     def set_metadata_language(self, language):
         if not language:
-            raise SANSSchemaFormatError('metadataLanguage is empty, record not posted',record_id=self.record_id)
+            warnings.warn(f'Record:{self.record_id}: Mandatory metadata language is empty')
+            return
         self.record["metadataLanguage"] = language
 
     def set_metadata_characterset(self, characterset):
         if not characterset:
-            raise SANSSchemaFormatError('metadataCharacterSet is empty, record not posted',record_id=self.record_id)
+            warnings.warn(f'Record:{self.record_id}: Mandatory metadata character set is empty')
+            return
         self.record["metadataCharacterSet"] = characterset
 
     def set_metadata_time_stamp(self, timestamp):
         if not timestamp:
-            raise SANSSchemaFormatError('metadataTimestamp cannot be blank',record_id=self.record_id)
+            warnings.warn(f'Record:{self.record_id}: Mandatory metadata time stamp is empty')
         timestamp = self.convert_date(timestamp) #TODO check if this is coming through as datetime
         if type(timestamp) != datetime:
             raise SANSSchemaFormatError("Invalid metadata timestamp, must be datetime")
@@ -237,12 +254,12 @@ class SANS1878SchemaGenerator(Schema):
 
     def set_scope(self, scope):
         if not scope:
-            raise SANSSchemaFormatError('scope is empty, record not posted',record_id=self.record_id)
+            warnings.warn(f'Record:{self.record_id}: Mandatory scope is empty')
         self.record["scope"] = scope
 
     def set_status(self, status):
         if not status:
-            raise SANSSchemaFormatError('status is empty, record not posted',record_id=self.record_id)
+            warnings.warn(f'Record:{self.record_id}: Mandatory status is empty')
         if type(status) != list:
             raise SANSSchemaFormatError("Invalid status type, must be a list")
         self.record["status"] = status
@@ -271,7 +288,7 @@ class SANS1878SchemaGenerator(Schema):
     def set_constraints(self, rights, rights_uri, access_constraints, use_constraints='', classification='',
                         use_limitations=''):
         if not rights:
-            raise SANSSchemaFormatError('Constraints is empty, record not posted',record_id=self.record_id)
+            warnings.warn(f'Record:{self.record_id}: Mandatory Constraints is empty')
         self.record["constraints"] = [{
             "rights": rights,
             "rightsURI": rights_uri,
