@@ -158,7 +158,7 @@ class SANS1878SchemaGenerator(Schema):
         if not abstract:
             warnings.warn(f'Record:{self.record_id}: Mandatory abstract set field is empty')
             return
-        self.record["abstract"] = abstract.decode()
+        self.record["abstract"] = abstract
 
     def set_distribution_format(self, format_name, format_version=None):
         if not format_name:
@@ -175,8 +175,8 @@ class SANS1878SchemaGenerator(Schema):
             warnings.warn(f'Record:{self.record_id}: Mandatory spatial resolution type field is empty')
             return
         return
-        rep_type_fixes = {'': '', 'vector': 'vector', 'grid': 'grid', \
-                          'texttable': 'textTable', 'tin': 'tin', 'stereomodel': 'stereoModel', \
+        rep_type_fixes = {'': '', 'vector': 'vector', 'grid': 'grid',
+                          'texttable': 'textTable', 'tin': 'tin', 'stereomodel': 'stereoModel',
                           'video': 'video', 'image': 'image'}
         self.record["spatialRepresentationTypes"] = [rep_type_fixes[represenation.lower()]]
 
@@ -189,7 +189,7 @@ class SANS1878SchemaGenerator(Schema):
     def set_lineage_statement(self, lineage):
         if not lineage:
             warnings.warn(f'Record:{self.record_id}: Mandatory lineage field is empty')
-        self.record["lineageStatement"] = lineage.decode()
+        self.record["lineageStatement"] = lineage
 
     def add_online_resources(self, onlineResources):
         if not onlineResources:

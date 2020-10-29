@@ -80,7 +80,7 @@ class ExcelImporter:
         if str(imported_text) == "nan" or imported_text is None:
             record[field] = None
             return
-        converted_text = imported_text.encode()
+        converted_text = imported_text
         record[field] = converted_text
 
     def parse_file_identifier(self, record):

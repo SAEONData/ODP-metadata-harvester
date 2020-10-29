@@ -1,5 +1,6 @@
 from datetime import datetime
 from schema import dataCiteSchemaFormatError
+from schema import Schema
 import warnings
 
 class DataCiteSchemaGenerator(Schema):
@@ -19,6 +20,7 @@ class DataCiteSchemaGenerator(Schema):
     def set_identifier(self, identifier,identifierType):
         if not identifier:
             warnings.warn(f'Record:{self.record_id}: identifiers is empty')
+            return
         self.record["identifier"] = {
             "identifier": identifier,
             "identifierType": identifierType
@@ -110,7 +112,7 @@ class DataCiteSchemaGenerator(Schema):
             warnings.warn(f'Record:{self.record_id}: Mandatory Dates field is empty')
             return
 
-    def add_only_start_date(self, start_date):
+    def set_only_start_date(self, start_date):
         timestamp_str = start_date.strftime("%Y-%m-%d")
         return {
                 "date": timestamp_str + '/',
@@ -198,7 +200,7 @@ class DataCiteSchemaGenerator(Schema):
             return
         self.record["descriptions"] = [
             {
-                "description": description.decode(),
+                "description": description,
                 "descriptionType": "Abstract"
             }
         ]
