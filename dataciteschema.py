@@ -17,13 +17,18 @@ class DataCiteSchemaGenerator(Schema):
             raise dataCiteSchemaFormatError('DOI is empty, record NOT posted',record_id=self.record_id)
         self.record['doi'] = DOI.strip()
 
-    def set_identifier(self, identifier,identifierType):
-        if not identifier:
+    def set_identifier(self, identifiers):
+        if not identifiers:
             warnings.warn(f'Record:{self.record_id}: identifiers is empty')
             return
-        self.record["identifier"] = {
-            "identifier": identifier,
-            "identifierType": identifierType
+        self.record['identifiers'] = []
+        for identifier in identifiers:
+            self.record['identifiers'].append(self.add_identifers(identifier))
+
+    def add_identifers(self,identifier):
+        return {
+            "identifier": identifier['alternativeIdentifier'].strip(),
+            "identifierType": identifier['alternativeIdentifierType'].strip()
         }
 
     def set_title(self, title):

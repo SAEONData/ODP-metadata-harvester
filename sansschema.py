@@ -238,7 +238,6 @@ class SANS1878SchemaGenerator(Schema):
     def set_metadata_time_stamp(self, timestamp):
         if not timestamp:
             warnings.warn(f'Record:{self.record_id}: Mandatory metadata time stamp is empty')
-        timestamp = self.convert_date(timestamp) #TODO check if this is coming through as datetime
         if type(timestamp) != datetime:
             raise SANSSchemaFormatError("Invalid metadata timestamp, must be datetime")
         format = "%Y-%m-%dT%H:%M:%S"

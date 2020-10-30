@@ -61,7 +61,7 @@ class builder:
         dataciteJSONrecord.set_resource_type(imported_record['scope'])
         dataciteJSONrecord.set_rights_list(imported_record['rights'],imported_record['rightsURI'])
         dataciteJSONrecord.set_description(imported_record['abstract'])
-        #dataciteJSONrecord.set_identifier(imported_record['alternateIdentifiers']) #TODO add an add_identifiers array function
+        dataciteJSONrecord.set_identifier(imported_record['alternateIdentifiers']) 
         #optional fields
 
         dataciteJSONrecord.set_language()
