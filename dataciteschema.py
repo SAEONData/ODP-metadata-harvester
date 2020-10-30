@@ -15,7 +15,7 @@ class DataCiteSchemaGenerator(Schema):
     def set_DOI(self,DOI):
         if not DOI:
             raise dataCiteSchemaFormatError('DOI is empty, record NOT posted',record_id=self.record_id)
-        self.record['doi'] = DOI
+        self.record['doi'] = DOI.strip()
 
     def set_identifier(self, identifier,identifierType):
         if not identifier:
@@ -33,7 +33,7 @@ class DataCiteSchemaGenerator(Schema):
 
         self.record["titles"] = [
             {
-                "title": title
+                "title": title.strip()
             }]
 
     def set_publisher(self, publisher):
@@ -42,7 +42,7 @@ class DataCiteSchemaGenerator(Schema):
             return
         for party in publisher:
             if party['role'] == 'publisher':
-                self.record["publisher"] = party['organizationName']
+                self.record["publisher"] = party['organizationName'].strip()
 
     def set_publication_year(self, year):
         if not year:
@@ -59,10 +59,10 @@ class DataCiteSchemaGenerator(Schema):
 
     def add_creators(self, creator):
         return {
-            "name": creator['individualName'],
+            "name": creator['individualName'].strip(),
             "affiliations": [
                 {
-                    "affiliation": creator['organizationName']
+                    "affiliation": creator['organizationName'].strip()
                 }
             ]
         }
@@ -76,8 +76,8 @@ class DataCiteSchemaGenerator(Schema):
 
     def add_subject(self, subject, subjectScheme):
         return {
-            "subject": subject,
-            "subjectScheme": subjectScheme
+            "subject": subject.strip(),
+            "subjectScheme": subjectScheme.strip()
         }
 
     def set_contributor(self,contributors):
@@ -94,7 +94,7 @@ class DataCiteSchemaGenerator(Schema):
             "name": contributors['individualName'],
             "affiliations": [
                 {
-                    "affiliation": contributors['organizationName']
+                    "affiliation": contributors['organizationName'].strip()
                 }
             ]
         }
@@ -133,8 +133,8 @@ class DataCiteSchemaGenerator(Schema):
             warnings.warn(f'Record:{self.record_id}: Mandatory types field is empty')
             return
         self.record["Types"] = {
-            "resourceType": type,
-            "resourceTypeGeneral": type
+            "resourceType": type.strip(),
+            "resourceTypeGeneral": type.strip()
         }
 
     def set_related_identifier(self,related):
@@ -150,18 +150,18 @@ class DataCiteSchemaGenerator(Schema):
 
     def add_related_identifers(self,related):
         return {
-            "relatedIdentifier": related['relatedIdentifier'],
-            "relatedIdentifierType": related['relatedIdentifierType'],
-            "relationType": related['relationType']
+            "relatedIdentifier": related['relatedIdentifier'].strip(),
+            "relatedIdentifierType": related['relatedIdentifierType'].strip(),
+            "relationType": related['relationType'].strip()
             }
 
     def add_related_identifiers_metadata(self,related):
         return {
-            "relatedIdentifier": related['relatedIdentifier'],
-            "relatedIdentifierType": related['relatedIdentifierType'],
-            "relationType": related['relationType'],
-            "relatedMetadataScheme": related['metadataScheme'],
-            "schemeURI": related['metadataSchemaURI']
+            "relatedIdentifier": related['relatedIdentifier'].strip(),
+            "relatedIdentifierType": related['relatedIdentifierType'].strip(),
+            "relationType": related['relationType'].strip(),
+            "relatedMetadataScheme": related['metadataScheme'].strip(),
+            "schemeURI": related['metadataSchemaURI'].strip()
             }
 
     def set_size(self, datasize):
@@ -169,13 +169,13 @@ class DataCiteSchemaGenerator(Schema):
             warnings.warn(f'Record:{self.record_id}: Data Size is empty, continuing with record')
             return
         self.record['sizes'] = []
-        self.record['sizes'] = datasize
+        self.record['sizes'] = datasize.strip()
 
     def set_format(self, dataformat):
         if not dataformat:
             warnings.warn(f'Record:{self.record_id}: Data format is empty, continuing with record')
             return
-        self.record["formats"] = [dataformat]
+        self.record["formats"] = [dataformat.strip()]
 
     def set_version(self,version):
         if not version:
@@ -189,8 +189,8 @@ class DataCiteSchemaGenerator(Schema):
             return
         self.record["rightsList"] = [
             {
-                "rights": rights,
-                "rightsURI": rightsURI
+                "rights": rights.strip(),
+                "rightsURI": rightsURI.strip()
             }
         ]
 
@@ -200,7 +200,7 @@ class DataCiteSchemaGenerator(Schema):
             return
         self.record["descriptions"] = [
             {
-                "description": description,
+                "description": description.strip(),
                 "descriptionType": "Abstract"
             }
         ]
@@ -212,7 +212,7 @@ class DataCiteSchemaGenerator(Schema):
         self.record["fundingReferences"] = []
         for funder in reference:
             self.record["fundingReferences"].append({
-                "funderName": funder['funder']
+                "funderName": funder['funder'].strip()
             })
 
     def set_online_resource(self,online_resources):
@@ -238,8 +238,8 @@ class DataCiteSchemaGenerator(Schema):
     def add_linkedResources(self, resource):
         return {
             "linkedResourceType": 'Information',
-            "resourceURL": resource['linkage'],
-            "resourceName": resource['description']
+            "resourceURL": resource['linkage'].strip(),
+            "resourceName": resource['description'].strip()
         }
 
     def set_geolocation_box(self,bounding_box):

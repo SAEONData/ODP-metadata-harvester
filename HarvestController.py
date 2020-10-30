@@ -22,14 +22,14 @@ class HarvestController:
                 if process_rec['metadataStandardName'] == 'Datacite':
                     result = client.create_or_update_metadata_record('chief-directorate-oceans-and-coastal-research',
                                                                      'marine-information-management-system-collection',
-                                                                     'saeon-odp-4-2',
+                                                                     'saeon-datacite-4-3',
                                                                      post_rec, capture_method='harvester',
                                                                      data_agreement_url='https://www.environment.gov.za/branches/oceans_coast')
                     pprint.pprint(result['errors'],indent=4)
                 elif process_rec['metadataStandardName'] == 'SANS 1878':
                     result = client.create_or_update_metadata_record('chief-directorate-oceans-and-coastal-research',
                                                                      'marine-information-management-system-collection',
-                                                                     'sans-1878-mims-historical-1',
+                                                                     'iso19115-saeon-profile',
                                                                      post_rec, capture_method='harvester',
                                                                      data_agreement_url='https://www.environment.gov.za/branches/oceans_coast')
                     pprint.pprint(result['errors'],indent=4)

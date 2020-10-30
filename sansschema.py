@@ -25,7 +25,7 @@ class SANS1878SchemaGenerator(Schema):
         if not title:
             warnings.warn(f'Record:{self.record_id}- Mandatory field: Title is empty')
             return
-        self.record["title"] = title
+        self.record["title"] = title.strip()
 
     def set_date(self, date):
         if not date:
@@ -36,11 +36,11 @@ class SANS1878SchemaGenerator(Schema):
     def add_responsible_party(self, name='', organization='', contact_info='', role='', position_name='',
                               online_resource=None):
         responsibleParties = {
-            "individualName": name,
-            "organizationName": organization,
-            "contactInfo": contact_info,
-            'positionName': position_name,
-            'role': role,
+            "individualName": name.strip(),
+            "organizationName": organization.strip(),
+            "contactInfo": contact_info.strip(),
+            'positionName': position_name.strip(),
+            'role': role.strip(),
         }
 
         return self.record['responsibleParties'].append(responsibleParties)
@@ -55,24 +55,24 @@ class SANS1878SchemaGenerator(Schema):
                       'principalinvestigator': 'principalInvestigator', 'processor': 'processor',
                       'publisher': 'publisher'}
         for rparty in responsible_parties_array:
-            contactInfo = "%r" % rparty['contactInfo']
-            # contactInfo = rparty['contactInfo']
-            if contactInfo == "''":
-                contactInfo = ''
+            #contactInfo = "%r" % rparty['contactInfo']
+            contactInfo = rparty['contactInfo']
+            #if contactInfo == "''":
+            #    contactInfo = ''
                 # print("Invalid contact info {} {}".format(rparty, record['fileIdentifier']))
                 # continue
             if len(rparty['email']) > 0:
                 contactInfo = contactInfo + "," + rparty['email']
-            self.add_responsible_party("%r" % rparty['individualName'], rparty['organizationName'],
+            self.add_responsible_party(rparty['individualName'], rparty['organizationName'],
                                        contactInfo, role_fixes[rparty['role'].lower()],
-                                       rparty['positionName'])  # , online_resource)
+                                       rparty['positionName'])
 
     def set_geographic_identifier(self, identifier):
         if not identifier:
             warnings.warn(f'Record:{self.record_id}: Mandatory Geographic Identifier field is empty')
             return
         else:
-            self.record["extent"]["geographicElements"][0]["geographicIdentifier"] = identifier
+            self.record["extent"]["geographicElements"][0]["geographicIdentifier"] = identifier.strip()
 
     def set_bounding_box_extent(self, bounding_box):
         if not bounding_box:
@@ -109,8 +109,8 @@ class SANS1878SchemaGenerator(Schema):
         vertical_extent = {
             "minimumValue": float(vertical_elements['minimumValue']),
             "maximumValue": float(vertical_elements['maximumValue']),
-            "unitOfMeasure": vertical_elements['unitOfMeasure'],
-            "verticalDatum": vertical_elements['verticalDatum']
+            "unitOfMeasure": vertical_elements['unitOfMeasure'].strip(),
+            "verticalDatum": vertical_elements['verticalDatum'].strip()
         }
         self.record["extent"]["verticalElement"] = vertical_extent
 
@@ -133,7 +133,7 @@ class SANS1878SchemaGenerator(Schema):
         if not language:
             warnings.warn(f'Record:{self.record_id}: Mandatory language field is empty')
             return
-        self.record["languages"] = [language]
+        self.record["languages"] = [language.strip()]
 
     def set_characterset(self, characterset):
         if not characterset:
@@ -145,26 +145,27 @@ class SANS1878SchemaGenerator(Schema):
         if not categories:
             warnings.warn(f'Record:{self.record_id}: Mandatory topic categories set field is empty')
             return
-        self.record["topicCategories"] = categories
+        self.record["topicCategories"] = categories #TODO: inputted array should be correctly outtputted to an array
+
 
     def set_spatial_resolution(self, resolution):
         if not resolution:
             self.record["spatialResolution"] = ''
             warnings.warn(f'Record:{self.record_id}: Spatial Resolution is empty, continuing with record')
             return
-        self.record["spatialResolution"] = resolution
+        self.record["spatialResolution"] = resolution.strip
 
     def set_abstract(self, abstract):
         if not abstract:
             warnings.warn(f'Record:{self.record_id}: Mandatory abstract set field is empty')
             return
-        self.record["abstract"] = abstract
+        self.record["abstract"] = abstract.strip()
 
     def set_distribution_format(self, format_name, format_version=None):
         if not format_name:
             warnings.warn(f'Record:{self.record_id}: Mandatory distribution format set field is empty')
             return
-        format = {"formatName": format_name}
+        format = {"formatName": format_name.strip()}
         # if format_version != list:
         #     raise SANSSchemaFormatError("Invalid distribution format type, must be a list")
         # format["formatVersion"] = format_version
@@ -184,7 +185,7 @@ class SANS1878SchemaGenerator(Schema):
         if not reference:
             warnings.warn(f'Record:{self.record_id}: Mandatory reference system name field is empty')
             return
-        self.record["referenceSystemName"] = {"codeSpace": reference['codeSpace'], "version": reference['version']}
+        self.record["referenceSystemName"] = {"codeSpace": reference['codeSpace'].strip(), "version": reference['version'].strip()}
 
     def set_lineage_statement(self, lineage):
         if not lineage:
@@ -207,32 +208,32 @@ class SANS1878SchemaGenerator(Schema):
 
     def set_file_identifier(self, file_identifier):
         if not file_identifier:
-            raise SANSSchemaFormatError('File Identifier is empty, record NOT posted',record_id=self.record_id)
-        self.record["fileIdentifier"] = file_identifier
+            raise SANSSchemaFormatError('File Identifier is empty, record NOT posted',record_id=self.record_id) #TODO needs to be changed in accordance to new DOI function
+        self.record["fileIdentifier"] = file_identifier.strip()
 
     def set_metadata_standard_name(self, metadata_standard):
         if not metadata_standard:
             warnings.warn(f'Record:{self.record_id}: Mandatory metadata standard name field is empty')
             return
-        self.record["metadataStandardName"] = metadata_standard
+        self.record["metadataStandardName"] = metadata_standard.strip()
 
     def set_metadata_standard_version(self, standard_version):
         if not standard_version:
             warnings.warn(f'Record:{self.record_id}: Mandatory metadata standard version field is empty')
             return
-        self.record["metadataStandardVersion"] = str(standard_version)
+        self.record["metadataStandardVersion"] = str(standard_version).strip()
 
     def set_metadata_language(self, language):
         if not language:
             warnings.warn(f'Record:{self.record_id}: Mandatory metadata language is empty')
             return
-        self.record["metadataLanguage"] = language
+        self.record["metadataLanguage"] = language.strip()
 
     def set_metadata_characterset(self, characterset):
         if not characterset:
             warnings.warn(f'Record:{self.record_id}: Mandatory metadata character set is empty')
             return
-        self.record["metadataCharacterSet"] = characterset
+        self.record["metadataCharacterSet"] = characterset.strip()
 
     def set_metadata_time_stamp(self, timestamp):
         if not timestamp:
@@ -255,14 +256,14 @@ class SANS1878SchemaGenerator(Schema):
     def set_scope(self, scope):
         if not scope:
             warnings.warn(f'Record:{self.record_id}: Mandatory scope is empty')
-        self.record["scope"] = scope
+        self.record["scope"] = scope.strip()
 
     def set_status(self, status):
         if not status:
             warnings.warn(f'Record:{self.record_id}: Mandatory status is empty')
         if type(status) != list:
             raise SANSSchemaFormatError("Invalid status type, must be a list")
-        self.record["status"] = status
+        self.record["status"] = status #TODO: inputted array should be correctly outtputted to an array
 
     def set_keywords(self, keywords):
         if not keywords:
@@ -271,7 +272,7 @@ class SANS1878SchemaGenerator(Schema):
         for word in keywords:
             self.record["descriptiveKeywords"].append({
                 "keywordType": 'general',
-                "keyword": word
+                "keyword": word.strip()
             })
 
     def set_descriptive_keywords(self, keywordArray):
@@ -281,8 +282,8 @@ class SANS1878SchemaGenerator(Schema):
         else:
             for word in keywordArray:
                 self.record["descriptiveKeywords"].append({
-                    "keywordType": word['keywordType'].replace(' ', ''),
-                    "keyword": word['keyword']
+                    "keywordType": word['keywordType'].strip(),
+                    "keyword": word['keyword'].strip()
                 })
 
     def set_constraints(self, rights, rights_uri, access_constraints, use_constraints='', classification='',
@@ -290,12 +291,12 @@ class SANS1878SchemaGenerator(Schema):
         if not rights:
             warnings.warn(f'Record:{self.record_id}: Mandatory Constraints is empty')
         self.record["constraints"] = [{
-            "rights": rights,
-            "rightsURI": rights_uri,
-            "useLimitations": [use_limitations],
-            "accessConstraints": [access_constraints],
-            "useConstraints": use_constraints,
-            "classification": classification}]
+            "rights": rights.strip(),
+            "rightsURI": rights_uri.strip(),
+            "useLimitations": [use_limitations.strip()],
+            "accessConstraints": [access_constraints.strip()],
+            "useConstraints": use_constraints.strip(),
+            "classification": classification.strip()}]
 
     def set_related_identifiers(self, related_identifiers_array):
         if not related_identifiers_array:
