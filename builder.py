@@ -15,8 +15,8 @@ class builder:
         sansJSONrecord = SANS1878SchemaGenerator(imported_record['DOI'])
         sansJSONrecord.set_title(imported_record['title'])
         sansJSONrecord.set_date(imported_record['date'])
-        #TODO: Add a top level DOI function
-        sansJSONrecord.set_file_identifier(str(imported_record['fileIdentifier'])) #accession
+        sansJSONrecord.set_DOI(imported_record['DOI'])
+        sansJSONrecord.set_file_identifier(str(imported_record['fileIdentifier']))
         sansJSONrecord.set_responsible_party(imported_record['responsibleParties'])
         sansJSONrecord.set_responsible_party(imported_record['responsibleParties.1'])
         sansJSONrecord.set_responsible_party(imported_record['responsibleParties.Publisher'])
@@ -61,7 +61,7 @@ class builder:
         dataciteJSONrecord.set_resource_type(imported_record['scope'])
         dataciteJSONrecord.set_rights_list(imported_record['rights'],imported_record['rightsURI'])
         dataciteJSONrecord.set_description(imported_record['abstract'])
-        dataciteJSONrecord.set_identifier(imported_record['alternateIdentifiers']) 
+        dataciteJSONrecord.set_identifier(imported_record['alternateIdentifiers'])
         #optional fields
 
         dataciteJSONrecord.set_language()

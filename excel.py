@@ -74,6 +74,7 @@ class ExcelImporter:
         self.parse_time_field(record,'metadataTimestamp')
         self.parse_text_field(record,'abstract')
         self.parse_text_field(record,'lineageStatement')
+        self.parse_text_field(record,'DOI')
 
     def parse_text_field(self, record, field):
         imported_text = record[field]

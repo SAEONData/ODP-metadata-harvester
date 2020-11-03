@@ -21,6 +21,11 @@ class SANS1878SchemaGenerator(Schema):
         self.record["onlineResources"] = []
         self.record["relatedIdentifiers"] = []
 
+    def set_DOI(self, DOI):
+        if not DOI:
+            raise SANSSchemaFormatError('DOI is empty, record NOT posted', record_id=self.record_id)
+        self.record['doi'] = DOI.strip()
+
     def set_title(self, title):
         if not title:
             warnings.warn(f'Record:{self.record_id}- Mandatory field: Title is empty')
@@ -55,12 +60,7 @@ class SANS1878SchemaGenerator(Schema):
                       'principalinvestigator': 'principalInvestigator', 'processor': 'processor',
                       'publisher': 'publisher'}
         for rparty in responsible_parties_array:
-            #contactInfo = "%r" % rparty['contactInfo']
             contactInfo = rparty['contactInfo']
-            #if contactInfo == "''":
-            #    contactInfo = ''
-                # print("Invalid contact info {} {}".format(rparty, record['fileIdentifier']))
-                # continue
             if len(rparty['email']) > 0:
                 contactInfo = contactInfo + "," + rparty['email']
             self.add_responsible_party(rparty['individualName'], rparty['organizationName'],
@@ -153,7 +153,7 @@ class SANS1878SchemaGenerator(Schema):
             self.record["spatialResolution"] = ''
             warnings.warn(f'Record:{self.record_id}: Spatial Resolution is empty, continuing with record')
             return
-        self.record["spatialResolution"] = resolution.strip
+        self.record["spatialResolution"] = resolution.strip()
 
     def set_abstract(self, abstract):
         if not abstract:
