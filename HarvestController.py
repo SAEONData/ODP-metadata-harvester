@@ -19,20 +19,21 @@ class HarvestController:
             try:
                 process_rec = imported_rec[i]
                 post_rec = json_rec[i]
-                pprint.pprint(post_rec)
+                #pprint.pprint(post_rec)
                 if process_rec['metadataStandardName'] == 'Datacite':
                     result = client.create_or_update_metadata_record('chief-directorate-oceans-and-coastal-research',
                                                                      'southern-african-data-centre-for-oceanography-collection',
                                                                      'saeon-datacite-4-3',
-                                                                     post_rec, capture_method='harvester',
-                                                                     data_agreement_url='https://www.environment.gov.za/branches/oceans_coast')
-                    pprint.pprint(result['errors'],indent=4)
-                elif process_rec['metadataStandardName'] == 'SANS 1878':
+                                                                     post_rec,
+                                                                     doi=str(post_rec['doi'].strip()))
+                    #pprint.pprint(result['errors'],indent=4)
+                elif process_rec['metadataStandardName'] == 'ISO19115':
                     result = client.create_or_update_metadata_record('chief-directorate-oceans-and-coastal-research',
                                                                      'southern-african-data-centre-for-oceanography-collection',
                                                                      'iso19115-saeon-profile',
-                                                                     post_rec, capture_method='harvester',
-                                                                     data_agreement_url='https://www.environment.gov.za/branches/oceans_coast')
-                    pprint.pprint(result['errors'],indent=4)
+                                                                     post_rec,
+                                                                     doi=post_rec['doi'].strip(),
+                                                                     sid=post_rec['fileIdentifier']['identifier'].strip())
+                    #pprint.pprint(result['errors'],indent=4)
             except ODPException as e:
                 print(f"{e}: {e.error_detail}")

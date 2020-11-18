@@ -1,10 +1,10 @@
 from datetime import datetime
 import warnings
 from schema import Schema
-from schema import SANSSchemaFormatError
+from schema import ISOSchemaFormatError
 
-class SANS1878SchemaGenerator(Schema):
-    # Create a SANS1878 JSON record
+class ISO19115chemaGenerator(Schema):
+    # Create a ISO19115 JSON record
     def __init__(self,record_id):
         super().__init__(record_id)
         self.record = {}
@@ -23,7 +23,8 @@ class SANS1878SchemaGenerator(Schema):
 
     def set_DOI(self, DOI):
         if not DOI:
-            raise SANSSchemaFormatError('DOI is empty, record NOT posted', record_id=self.record_id)
+            warnings.warn(f'Record:{self.record_id}- Mandatory field: DOI is empty')
+            return
         self.record['doi'] = DOI.strip()
 
     def set_title(self, title):
@@ -39,7 +40,7 @@ class SANS1878SchemaGenerator(Schema):
         self.record["date"] = date.strftime("%Y-%2m-%2d")
 
     def add_responsible_party(self, name='', organization='', contact_info='', role='', position_name='',
-                              online_resource=None):
+):
         responsibleParties = {
             "individualName": name.strip(),
             "organizationName": organization.strip(),
@@ -91,14 +92,14 @@ class SANS1878SchemaGenerator(Schema):
             warnings.warn(f'{self.record_id}: Bounding polygon is empty, continuing with record')
             return
         if type(polygon) != list or len(polygon) < 5:
-            raise SANSSchemaFormatError("Invalid polygon type, must be a list with 5 elements")
+            raise ISOSchemaFormatError("Invalid polygon type, must be a list with 5 elements")
         valid_keys = ['longitude', 'latitude']
         for point in polygon:
             if type(point) != dict:
-                raise SANSSchemaFormatError("Invalid polygon element, must be a dict")
+                raise ISOSchemaFormatError("Invalid polygon element, must be a dict")
             for k in point.keys():
                 if k not in valid_keys:
-                    raise SANSSchemaFormatError("Invalid polygon key name, must be 'longitude' or 'latitude'")
+                    raise ISOSchemaFormatError("Invalid polygon key name, must be 'longitude' or 'latitude'")
 
         self.record["extent"]["geographicElements"][0]["boundingPolygon"].append(polygon)
 
@@ -119,7 +120,7 @@ class SANS1878SchemaGenerator(Schema):
             warnings.warn(f'Record:{self.record_id}: Mandatory start_time or end_time field is empty')
             return
         if type(start_time) != datetime or type(end_time) != datetime:
-            raise SANSSchemaFormatError("Invalid start/end time type, must be a datetime")
+            raise ISOSchemaFormatError("Invalid start/end time type, must be a datetime")
         format = "%Y-%2m-%2dT%H:%M:%S"
         start_time_str = start_time.strftime(format) + "+02:00"
         end_time_str = end_time.strftime(format) + "+02:00"
@@ -167,7 +168,7 @@ class SANS1878SchemaGenerator(Schema):
             return
         format = {"formatName": format_name.strip()}
         # if format_version != list:
-        #     raise SANSSchemaFormatError("Invalid distribution format type, must be a list")
+        #     raise ISOSchemaFormatError("Invalid distribution format type, must be a list")
         # format["formatVersion"] = format_version
         self.record["distributionFormats"].append(format)
 
@@ -175,7 +176,6 @@ class SANS1878SchemaGenerator(Schema):
         if not represenation:
             warnings.warn(f'Record:{self.record_id}: Mandatory spatial resolution type field is empty')
             return
-        return
         rep_type_fixes = {'': '', 'vector': 'vector', 'grid': 'grid',
                           'texttable': 'textTable', 'tin': 'tin', 'stereomodel': 'stereoModel',
                           'video': 'video', 'image': 'image'}
@@ -195,6 +195,7 @@ class SANS1878SchemaGenerator(Schema):
     def add_online_resources(self, onlineResources):
         if not onlineResources:
             warnings.warn(f'Record:{self.record_id}: Mandatory online resource field is empty')
+            return
         for resource in onlineResources:
             if str(resource) == 'nan':
                 self.record["onlineResources"] = ''
@@ -206,10 +207,14 @@ class SANS1878SchemaGenerator(Schema):
                 }
                 self.record["onlineResources"].append(online_resource)
 
-    def set_file_identifier(self, file_identifier):
+    def set_accession_identifier(self, file_identifier):
         if not file_identifier:
-            raise SANSSchemaFormatError('File Identifier is empty, record NOT posted',record_id=self.record_id) #TODO needs to be changed in accordance to new DOI function
-        self.record["fileIdentifier"] = file_identifier.strip()
+            warnings.warn(f'Record:{self.record_id}: Mandatory fileIdentifier field is empty')
+            return
+        self.record["fileIdentifier"] = {
+        "identifier": str(file_identifier.strip()),
+        "identifierType": str("AccessionID")
+        }
 
     def set_metadata_standard_name(self, metadata_standard):
         if not metadata_standard:
@@ -239,7 +244,7 @@ class SANS1878SchemaGenerator(Schema):
         if not timestamp:
             warnings.warn(f'Record:{self.record_id}: Mandatory metadata time stamp is empty')
         if type(timestamp) != datetime:
-            raise SANSSchemaFormatError("Invalid metadata timestamp, must be datetime")
+            raise ISOSchemaFormatError("Invalid metadata timestamp, must be datetime")
         format = "%Y-%m-%dT%H:%M:%S"
         # format="%Y-%m-%d %H:%M:%S"
         timestamp_str = timestamp.strftime(format) + "+02:00"
@@ -261,7 +266,7 @@ class SANS1878SchemaGenerator(Schema):
         if not status:
             warnings.warn(f'Record:{self.record_id}: Mandatory status is empty')
         if type(status) != list:
-            raise SANSSchemaFormatError("Invalid status type, must be a list")
+            raise ISOSchemaFormatError("Invalid status type, must be a list")
         self.record["status"] = status #TODO: inputted array should be correctly outtputted to an array
 
     def set_keywords(self, keywords):

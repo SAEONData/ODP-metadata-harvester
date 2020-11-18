@@ -52,7 +52,7 @@ class DataCiteSchemaGenerator(Schema):
     def set_publication_year(self, year):
         if not year:
             warnings.warn(f'Record:{self.record_id}: Mandatory Publication year field is empty')
-        self.record["publicationYear"] = year.strftime("%Y")
+        self.record["publicationYear"] = int(year.strftime("%Y"))
 
 
     def set_creators(self,creator):
@@ -65,7 +65,7 @@ class DataCiteSchemaGenerator(Schema):
     def add_creators(self, creator):
         return {
             "name": creator['individualName'].strip(),
-            "affiliations": [
+            "affiliation": [
                 {
                     "affiliation": creator['organizationName'].strip()
                 }
@@ -97,7 +97,7 @@ class DataCiteSchemaGenerator(Schema):
         return {
             "contributorType": contributors['role'],
             "name": contributors['individualName'],
-            "affiliations": [
+            "affiliation": [
                 {
                     "affiliation": contributors['organizationName'].strip()
                 }
@@ -137,7 +137,7 @@ class DataCiteSchemaGenerator(Schema):
         if not type:
             warnings.warn(f'Record:{self.record_id}: Mandatory types field is empty')
             return
-        self.record["Types"] = {
+        self.record["types"] = {
             "resourceType": type.strip(),
             "resourceTypeGeneral": type.strip()
         }
@@ -235,7 +235,8 @@ class DataCiteSchemaGenerator(Schema):
 
     def add_immutableResource(self, resource):
             self.record["immutableResource"] = {
-                "resourceURL": resource['linkage'],
+                "resourceDownload": {
+                    "downloadURL" : resource['linkage']},
                 "resourceName": resource['description'],
                 "resourceDescription": resource['name']
             }

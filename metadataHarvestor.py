@@ -28,7 +28,7 @@ class MetadataHarvest:
         if imported_record['metadataStandardName'] == 'Datacite':
             dataciteBuilder = recordBuilder.build_datacite_json_record(imported_record)
             return dataciteBuilder
-        elif imported_record['metadataStandardName'] == 'SANS 1878':
+        elif imported_record['metadataStandardName'] == 'ISO19115':
             sansBuilder = recordBuilder.build_sans_json_record(imported_record)
             return sansBuilder
         else:
