@@ -86,7 +86,7 @@ class ExcelImporter:
 
     def parse_file_identifier(self, record):
         if type(record['fileIdentifier']) == float:
-            record['fileIdentifier'] = str(int(record['fileIdentifier'].strip()))
+            record['fileIdentifier'] = str(record['fileIdentifier'].strip())
 
     def parse_responsible_parties(self, record, field):
         valid_keys = ['individualName','organizationName','positionName','contactInfo','role','email']

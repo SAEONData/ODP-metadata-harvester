@@ -211,10 +211,7 @@ class ISO19115chemaGenerator(Schema):
         if not file_identifier:
             warnings.warn(f'Record:{self.record_id}: Mandatory fileIdentifier field is empty')
             return
-        self.record["fileIdentifier"] = {
-        "identifier": str(file_identifier.strip()),
-        "identifierType": str("AccessionID")
-        }
+        self.record["fileIdentifier"] = file_identifier.strip()
 
     def set_metadata_standard_name(self, metadata_standard):
         if not metadata_standard:
