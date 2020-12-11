@@ -1,13 +1,10 @@
 import argparse
-import metadataHarvestor
 import HarvestController
 
 def main():
-#    importer = metadataImport()
-#    importer.get_filename(args.excel_file)
-    hello = HarvestController.HarvestController()
-    test = hello.harvest_records()
-    return test
+    harvest = HarvestController.HarvestController()
+    harvested_records = harvest.harvest_records()
+    return harvested_records
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()

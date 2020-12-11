@@ -26,7 +26,7 @@ class HarvestController:
                                                                      'saeon-datacite-4-3',
                                                                      post_rec,
                                                                      doi=str(post_rec['doi'].strip()))
-                    #pprint.pprint(result['errors'],indent=4)
+                    pprint.pprint(result['errors'],indent=4)
                 elif process_rec['metadataStandardName'] == 'ISO19115':
                     result = client.create_or_update_metadata_record('chief-directorate-oceans-and-coastal-research',
                                                                      'marine-information-management-system-collection',

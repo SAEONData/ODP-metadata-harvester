@@ -177,9 +177,9 @@ class ISO19115chemaGenerator(Schema):
             warnings.warn(f'Record:{self.record_id}: Mandatory spatial resolution type field is empty')
             return
         rep_type_fixes = {'': '', 'vector': 'vector', 'grid': 'grid',
-                          'texttable': 'textTable', 'tin': 'tin', 'stereomodel': 'stereoModel',
+                          'textTable': 'textTable', 'tin': 'tin', 'stereomodel': 'stereoModel',
                           'video': 'video', 'image': 'image'}
-        self.record["spatialRepresentationTypes"] = [rep_type_fixes[represenation.lower()]]
+        self.record["spatialRepresentationTypes"] = [rep_type_fixes[represenation]]
 
     def set_reference_system_name(self, reference):
         if not reference:

@@ -147,11 +147,11 @@ class DataCiteSchemaGenerator(Schema):
             warnings.warn(f'Record:{self.record_id}: Related Identifiers is empty, continuing with record')
             return
         self.record['relatedIdentifiers'] = []
-        for related in related:
-            if related['relationType'] == "IsMetadataFor" or related['relationType'] == "HasMetadata":
-                self.append(self.add_related_identifiers_metadata(related))
+        for relate in related:
+            if relate['relationType'] == "IsMetadataFor" or relate['relationType'] == "HasMetadata":
+                self.record['relatedIdentifiers'].append(self.add_related_identifiers_metadata(relate))
             else:
-                self.append(self.add_related_identifers(related))
+                self.record['relatedIdentifiers'].append(self.add_related_identifers(relate))
 
     def add_related_identifers(self,related):
         return {
