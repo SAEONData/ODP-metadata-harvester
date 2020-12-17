@@ -19,7 +19,7 @@ class HarvestController:
             try:
                 process_rec = imported_rec[i]
                 post_rec = json_rec[i]
-                print(post_rec)
+                #print(post_rec)
                 if process_rec['metadataStandardName'] == 'Datacite':
                     result = client.create_or_update_metadata_record('chief-directorate-oceans-and-coastal-research',
                                                                      'marine-information-management-system-collection',
