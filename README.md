@@ -14,12 +14,12 @@ A python client for harvesting metadata into the ODP metadata manager
 
 ### Environment variables
 
-The library reads the following environment variables.
+The harvester reads the following environment variables.
 
-- `FILE_NAME`: Path and filename of the file for harvesting
+- `FILE_NAME`: Path and filename of the excel file for harvesting
 - `SHEET_NAME`: Name of the sheet to be harvested in the file name
 
-Remember to include the required Environmental variables required by the ODP-Clien
+Remember to include the required Environmental variables required by the ODP-Client
 
 _N.B. DO NOT commit secrets to source control. If you load environment variables from
 a `.env` file, be sure to add a `.gitignore` rule for `.env` to your project._
