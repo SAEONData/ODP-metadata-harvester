@@ -25,4 +25,4 @@ _N.B. DO NOT commit secrets to source control. If you load environment variables
 a `.env` file, be sure to add a `.gitignore` rule for `.env` to your project._
 
 ### Run
-python main.py
+<base_dir>$ python main.py
