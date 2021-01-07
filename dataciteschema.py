@@ -1,7 +1,7 @@
 from datetime import datetime
 from schema import dataCiteSchemaFormatError
 from schema import Schema
-import warnings
+from setup_logger import logger
 
 class DataCiteSchemaGenerator(Schema):
     # Create a DataCite JSON record
@@ -19,7 +19,7 @@ class DataCiteSchemaGenerator(Schema):
 
     def set_identifier(self, identifiers):
         if not identifiers:
-            warnings.warn(f'Record:{self.record_id}: identifiers is empty')
+            logger.warning(f'Record:{self.record_id}: identifiers is empty')
             return
         self.record['identifiers'] = []
         for identifier in identifiers:
@@ -33,7 +33,7 @@ class DataCiteSchemaGenerator(Schema):
 
     def set_title(self, title):
         if not title:
-            warnings.warn(f'Record:{self.record_id}: Mandatory Title field is empty')
+            logger.warning(f'Record:{self.record_id}: Mandatory Title field is empty')
             return
 
         self.record["titles"] = [
@@ -43,7 +43,7 @@ class DataCiteSchemaGenerator(Schema):
 
     def set_publisher(self, publisher):
         if not publisher:
-            warnings.warn(f'Record:{self.record_id}: Mandatory Publisher field is empty')
+            logger.warning(f'Record:{self.record_id}: Mandatory Publisher field is empty')
             return
         for party in publisher:
             if party['role'] == 'publisher':
@@ -51,13 +51,13 @@ class DataCiteSchemaGenerator(Schema):
 
     def set_publication_year(self, year):
         if not year:
-            warnings.warn(f'Record:{self.record_id}: Mandatory Publication year field is empty')
+            logger.warning(f'Record:{self.record_id}: Mandatory Publication year field is empty')
         self.record["publicationYear"] = int(year.strftime("%Y"))
 
 
     def set_creators(self,creator):
         if not creator:
-            warnings.warn(f'Record:{self.record_id}: Mandatory Creator field is empty')
+            logger.warning(f'Record:{self.record_id}: Mandatory Creator field is empty')
             return
         for person in creator:
             self.record['creators'].append(self.add_creators(person))
@@ -74,7 +74,7 @@ class DataCiteSchemaGenerator(Schema):
 
     def set_subject(self,subjects):
         if not subjects:
-            warnings.warn(f'Record:{self.record_id}: Mandatory subjects field is empty')
+            logger.warning(f'Record:{self.record_id}: Mandatory subjects field is empty')
             return
         for word in subjects:
             self.record['subjects'].append(self.add_subject(word,'general'))
@@ -87,7 +87,7 @@ class DataCiteSchemaGenerator(Schema):
 
     def set_contributor(self,contributors):
         if not contributors:
-            warnings.warn(f'Record:{self.record_id}: Contributors is empty, continuing with record')
+            logger.warning(f'Record:{self.record_id}: Contributors is empty, continuing with record')
             return
         for person in contributors:
             self.record['contributors'] = []
@@ -114,7 +114,7 @@ class DataCiteSchemaGenerator(Schema):
             self.record['dates'] = []
             self.record['dates'].append(self.set_only_start_date(start_time))
         else:
-            warnings.warn(f'Record:{self.record_id}: Mandatory Dates field is empty')
+            logger.warning(f'Record:{self.record_id}: Mandatory Dates field is empty')
             return
 
     def set_only_start_date(self, start_date):
@@ -135,7 +135,7 @@ class DataCiteSchemaGenerator(Schema):
 
     def set_resource_type(self, type):
         if not type:
-            warnings.warn(f'Record:{self.record_id}: Mandatory types field is empty')
+            logger.warning(f'Record:{self.record_id}: Mandatory types field is empty')
             return
         self.record["types"] = {
             "resourceType": type.strip(),
@@ -144,7 +144,7 @@ class DataCiteSchemaGenerator(Schema):
 
     def set_related_identifier(self,related):
         if not related:
-            warnings.warn(f'Record:{self.record_id}: Related Identifiers is empty, continuing with record')
+            logger.warning(f'Record:{self.record_id}: Related Identifiers is empty, continuing with record')
             return
         self.record['relatedIdentifiers'] = []
         for relate in related:
@@ -171,26 +171,26 @@ class DataCiteSchemaGenerator(Schema):
 
     def set_size(self, datasize):
         if not datasize:
-            warnings.warn(f'Record:{self.record_id}: Data Size is empty, continuing with record')
+            logger.warning(f'Record:{self.record_id}: Data Size is empty, continuing with record')
             return
         self.record['sizes'] = []
         self.record['sizes'] = datasize.strip()
 
     def set_format(self, dataformat):
         if not dataformat:
-            warnings.warn(f'Record:{self.record_id}: Data format is empty, continuing with record')
+            logger.warning(f'Record:{self.record_id}: Data format is empty, continuing with record')
             return
         self.record["formats"] = [dataformat.strip()]
 
     def set_version(self,version):
         if not version:
-            warnings.warn(f'Record:{self.record_id}: Version (dataset) is empty, continuing with record')
+            logger.warning(f'Record:{self.record_id}: Version (dataset) is empty, continuing with record')
             return
         self.record["version"] = str(version)
 
     def set_rights_list(self, rights, rightsURI):
         if not rights:
-            warnings.warn(f'Record:{self.record_id}: Mandatory Rights or Rights URI field is empty')
+            logger.warning(f'Record:{self.record_id}: Mandatory Rights or Rights URI field is empty')
             return
         self.record["rightsList"] = [
             {
@@ -201,7 +201,7 @@ class DataCiteSchemaGenerator(Schema):
 
     def set_description(self, description):
         if not description:
-            warnings.warn(f'Record:{self.record_id}: Mandatory description field is empty')
+            logger.warning(f'Record:{self.record_id}: Mandatory description field is empty')
             return
         self.record["descriptions"] = [
             {
@@ -212,7 +212,7 @@ class DataCiteSchemaGenerator(Schema):
 
     def set_funding_reference(self, reference):
         if not reference:
-            warnings.warn(f'Record:{self.record_id}: Funding reference is empty, continuing with record')
+            logger.warning(f'Record:{self.record_id}: Funding reference is empty, continuing with record')
             return
         self.record["fundingReferences"] = []
         for funder in reference:
@@ -222,7 +222,7 @@ class DataCiteSchemaGenerator(Schema):
 
     def set_online_resource(self,online_resources):
         if not online_resources:
-            warnings.warn(f'Record:{self.record_id}: Online Resources is empty, continuing with record')
+            logger.warning(f'Record:{self.record_id}: Online Resources is empty, continuing with record')
             return
         for resource in online_resources:
             if resource['description'] == 'download':
@@ -250,7 +250,7 @@ class DataCiteSchemaGenerator(Schema):
 
     def set_geolocation_box(self,bounding_box):
         if not bounding_box:
-            warnings.warn(f'Record:{self.record_id}: Geolocation box is empty, continuing with record')
+            logger.warning(f'Record:{self.record_id}: Geolocation box is empty, continuing with record')
             return
         self.record['geoLocations'] = []
         self.record['geoLocations'].append(self.add_geolocation_box(bounding_box))

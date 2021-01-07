@@ -1,4 +1,5 @@
 import HarvestController
+import logging
 
 def main():
     harvest = HarvestController.HarvestController()

@@ -2,6 +2,7 @@ import sys
 import traceback
 from datetime import datetime
 import pandas
+from setup_logger import logger
 
 class RecordParseError(Exception):
     pass
@@ -23,6 +24,7 @@ class ExcelImporter:
     def read_excel_to_json(self, spreadsheet_file, sheet):
         raw_record = None
         try:
+            logger.debug('Trying to load excel file')
             df = pandas.read_excel(spreadsheet_file,sheet,dtype=object)
             raw_records = []
             for index, row in df.iterrows():
@@ -34,10 +36,9 @@ class ExcelImporter:
                     self.parse_raw_record(raw_record)
                     raw_records.append(raw_record)
                 except RecordParseError as e:
-                    print("{}Record id: {}".format(e, raw_record['fileIdentifier']))
+                    logger.exception("{}Record id: {}".format(e, raw_record['fileIdentifier']))
         except Exception as e:
-            print("Error while reading excel speadsheet. {}".format(e))
-            #traceback.print_exc(file=sys.stdout)
+            logger.exception("Error while reading excel speadsheet. {}".format(e))
         return raw_records
 
     def parse_raw_record(self, record):

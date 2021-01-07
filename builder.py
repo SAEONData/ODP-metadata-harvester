@@ -1,6 +1,7 @@
 import datetime
 from ISOschema import ISO19115chemaGenerator
 from dataciteschema import DataCiteSchemaGenerator
+from setup_logger import logger
 
 class builderError(Exception):
     def __init__(self):
@@ -12,6 +13,7 @@ class builder:
 
     def build_sans_json_record(self,imported_record):
         #Inserts the contents of the imported SANS record into the JSON format
+        logger.debug('Starting building ISO19115 record')
         sansJSONrecord = ISO19115chemaGenerator(imported_record['DOI'])
         sansJSONrecord.set_title(imported_record['title'])
         sansJSONrecord.set_date(imported_record['date'])
@@ -46,10 +48,12 @@ class builder:
         sansJSONrecord.set_keywords(imported_record['keyword'])
         sansJSONrecord.set_constraints(imported_record['rights'],imported_record['rightsURI'],imported_record['accessConstraints'])
         sansJSONrecord.set_related_identifiers(imported_record['relatedIdentifiers'])
+        logger.debug('Finished building ISO19115 record')
         return sansJSONrecord.record
 
     def build_datacite_json_record(self,imported_record):
         # Inserts the contents of the imported record into the datacite JSON format
+        logger.debug('Started building Datacite record')
         dataciteJSONrecord = DataCiteSchemaGenerator(imported_record['DOI'])
         dataciteJSONrecord.set_DOI(imported_record['DOI'])
         #required fields
@@ -75,5 +79,6 @@ class builder:
         dataciteJSONrecord.set_online_resource(imported_record['onlineResources'])
         dataciteJSONrecord.set_related_identifier(imported_record['relatedIdentifiers'])
         dataciteJSONrecord.set_geolocation_box(imported_record['boundingBox'])
+        logger.debug('Finished building Datacite record')
         return dataciteJSONrecord.record
 
