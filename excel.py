@@ -17,15 +17,25 @@ class ExcelImporter:
          'rightsURI', 'lineageStatement', 'onlineResources', 'relatedIdentifiers','size','fundingReferences','datasetVersion',
          'alternateIdentifiers']
 
+    _required_col_count = 37
+
     def __init__(self):
         pass
 
 
     def read_excel_to_json(self, spreadsheet_file, sheet):
+        def cleanup(input):
+            input = str(input).replace('\n','')
+            return input
+
+        converters = {}
+        for i in range(self._required_col_count):
+            converters[i] = cleanup
+
         raw_record = None
         try:
             logger.debug('Trying to load excel file')
-            df = pandas.read_excel(spreadsheet_file,sheet,dtype=object)
+            df = pandas.read_excel(spreadsheet_file,sheet,converters=converters)#{34:cleanup})  dtype=object,engine='openpyxl'
             raw_records = []
             for index, row in df.iterrows():
                 try:
@@ -94,7 +104,7 @@ class ExcelImporter:
         responsible_parties = []
         try:
             raw_str = record[field]
-            for detail_str in raw_str.split("\n"):
+            for detail_str in raw_str.split(";"):
                 if len(detail_str.replace(" ","")) > 0:
                     detail = {'individualName':'','organizationName':'','positionName':'',
                               'contactInfo':'','role':'','email':''}
