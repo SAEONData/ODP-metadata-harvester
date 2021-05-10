@@ -79,13 +79,17 @@ class ISO19115chemaGenerator(Schema):
         if not bounding_box:
             logger.warning(f'Record:{self.record_id}: Mandatory Bounding Box field is empty')
             return
-        box = {
-            "westBoundLongitude": float(bounding_box['westBoundLongitude']),
-            "eastBoundLongitude": float(bounding_box['eastBoundLongitude']),
-            "southBoundLatitude": float(bounding_box['southBoundLatitude']),
-            "northBoundLatitude": float(bounding_box['northBoundLatitude'])
-        }
-        self.record["extent"]["geographicElements"][0]["boundingBox"] = box
+
+        try:
+            box = {
+                "westBoundLongitude": float(bounding_box['westBoundLongitude']),
+                "eastBoundLongitude": float(bounding_box['eastBoundLongitude']),
+                "southBoundLatitude": float(bounding_box['southBoundLatitude']),
+                "northBoundLatitude": float(bounding_box['northBoundLatitude'])
+            }
+            self.record["extent"]["geographicElements"][0]["boundingBox"] = box
+        except Exception as e:
+            logger.warning(f'Record:{self.record_id}: Bounding box contains non float/int value {e}')
 
     def add_bounding_polygon(self, polygon):
         if not polygon:
@@ -257,6 +261,7 @@ class ISO19115chemaGenerator(Schema):
     def set_scope(self, scope):
         if not scope:
             logger.warning(f'Record:{self.record_id}: Mandatory scope is empty')
+            return
         self.record["scope"] = scope.strip()
 
     def set_status(self, status):
