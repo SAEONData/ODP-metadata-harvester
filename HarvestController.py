@@ -5,7 +5,9 @@ from dotenv import load_dotenv
 import os
 import pprint
 from setup_logger import logger
+import json
 
+HARVEST_STATS = {}
 
 class HarvestController:
 
@@ -18,6 +20,7 @@ class HarvestController:
         records = harvester.get_records()
         imported_rec = records[1]
         json_rec = records[0]
+
         for i in range(len(json_rec)):
             try:
                 process_rec = imported_rec[i]
@@ -27,7 +30,11 @@ class HarvestController:
                     curr_doi = str(post_rec['doi'].strip())
                 else:
                     curr_doi = None
-                curr_sid = str(post_rec['fileIdentifier'].strip())
+
+                if 'fileIdentifier' in post_rec and len(post_rec['fileIdentifier']) > 0:
+                    curr_sid = str(post_rec['fileIdentifier'].strip())
+                else:
+                    curr_sid = None
 
                 """
                 role_check_list = ['pointOfContact', 'originator', 'publisher']
@@ -46,12 +53,23 @@ class HarvestController:
 
                 logger.info("Attempting to add record DOI - {} ; SID - {}".format(curr_doi, curr_sid))
                 upload_result = None
+
                 if process_rec['metadataStandardName'] == 'Datacite':
-                    upload_result = client.create_or_update_metadata_record('chief-directorate-oceans-and-coastal-research',
-                                                                     'marine-information-management-system-collection',
-                                                                     'saeon-datacite-4-3',
-                                                                     post_rec,
-                                                                     doi=str(post_rec['doi'].strip()))
+                    if curr_doi:
+                        upload_result = client.create_or_update_metadata_record('chief-directorate-oceans-and-coastal-research',
+                                                                         'marine-information-management-system-collection',
+                                                                         'saeon-datacite-4-3',
+                                                                         post_rec,
+                                                                         doi=curr_doi)
+                    else:
+                        logger.info("No DOI, posting with SID instead {}".format(curr_sid))
+                        print("Just a SID man {}".format(curr_sid))
+                        upload_result = client.create_or_update_metadata_record('chief-directorate-oceans-and-coastal-research',
+                                                 'marine-information-management-system-collection',
+                                                 'saeon-datacite-4-3',
+                                                 post_rec,
+                                                 sid=curr_sid)
+
                 elif process_rec['metadataStandardName'] == 'ISO19115':
                     if curr_doi:
                         upload_result = client.create_or_update_metadata_record('chief-directorate-oceans-and-coastal-research',
@@ -84,11 +102,14 @@ class HarvestController:
                         state='published')
                 if workflow_result['success']:
                     logger.info("Successfully updated state to published for record with ID {}".format(upload_result['id']))
+                    HARVEST_STATS[curr_doi if curr_doi else curr_sid]['status'] = 'publised'
                 elif len(workflow_result['errors']) > 0:
                     workflow_errors = workflow_result['errors']
+                    HARVEST_STATS[curr_doi if curr_doi else curr_sid]['status'] = 'failed'
+                    HARVEST_STATS[curr_doi if curr_doi else curr_sid]['odp_errors'] = "{} {}".format(workflow_result['errors'], upload_result['errors'])
                     raise Exception("Errors when setting state for {} {} workflow errors {} validation errors {}".format(curr_sid, upload_result['id'], workflow_result['errors'], upload_result['errors']))
                 else:
-                    raise Exception("{}".format(workflow_result['errors']))
+                    raise Exception("Other error {}".format(workflow_result))
 
             except ODPException as e:
                 logger.exception(f"{e}: {e.error_detail}")
@@ -96,4 +117,9 @@ class HarvestController:
             except Exception as e:
                 logger.exception(f"{e}")
                 print(f"{e}")
+
+        with open('./harvest_stats.json','w') as harvest_stats_outfile:
+            json.dump(HARVEST_STATS, harvest_stats_outfile)
+            harvest_stats_outfile.close()
+
 

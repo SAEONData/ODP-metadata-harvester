@@ -14,7 +14,12 @@ class builder:
     def build_sans_json_record(self,imported_record):
         #Inserts the contents of the imported SANS record into the JSON format
         logger.debug('Starting building ISO19115 record')
-        sansJSONrecord = ISO19115chemaGenerator(imported_record['DOI'])
+        if imported_record['DOI']:
+            curr_identifier = imported_record['DOI']
+        else:
+            curr_identifier = imported_record['fileIdentifier']
+        sansJSONrecord = ISO19115chemaGenerator(curr_identifier)
+
         sansJSONrecord.set_title(imported_record['title'])
         sansJSONrecord.set_date(imported_record['date'])
         sansJSONrecord.set_DOI(imported_record['DOI'])
@@ -56,6 +61,7 @@ class builder:
         logger.debug('Started building Datacite record')
         dataciteJSONrecord = DataCiteSchemaGenerator(imported_record['DOI'])
         dataciteJSONrecord.set_DOI(imported_record['DOI'])
+        dataciteJSONrecord.set_accession_identifier(str(imported_record['fileIdentifier']))
         #required fields
         dataciteJSONrecord.set_title(imported_record['title'])
         dataciteJSONrecord.set_publisher(imported_record['responsibleParties.Publisher'])

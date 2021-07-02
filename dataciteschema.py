@@ -14,8 +14,16 @@ class DataCiteSchemaGenerator(Schema):
 
     def set_DOI(self,DOI):
         if not DOI:
-            raise dataCiteSchemaFormatError('DOI is empty, record NOT posted',record_id=self.record_id)
+            logger.warning(f'Record:{self.record_id}: DOI is empty')
+            return
         self.record['doi'] = DOI.strip()
+
+    def set_accession_identifier(self, file_identifier):
+        if not file_identifier:
+            self._monitoring_helper(warning=f'Record:{self.record_id}: Mandatory fileIdentifier field is empty')
+            return
+        self.record["fileIdentifier"] = file_identifier.strip()
+
 
     def set_identifier(self, identifiers):
         if not identifiers:

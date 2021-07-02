@@ -1,9 +1,11 @@
 import metadataimporter
+import HarvestController
 from schema import SchemaFormatError
 from builder import builder
 from builder import builderError
 from setup_logger import logger
 import os
+import HarvestController
 
 class MetadataHarvest:
 
@@ -21,6 +23,10 @@ class MetadataHarvest:
                 imported_records.append(imported_record)
             except SchemaFormatError as e:
                 print(f'!Schema ERROR!: record ID {e.record_id}:{e}')
+                curr_rec_id = imported_record['DOI'] if imported_record['DOI'] else imported_record['fileIdentifier']
+                logger.warning(f'!Schema ERROR!: record ID {curr_rec_id}:{e}')
+                HarvestController.HARVEST_STATS[curr_rec_id]['status'] = 'failed'
+                HarvestController.HARVEST_STATS[curr_rec_id]['schema_errors'].append("{}".format(e))
         return json_records,imported_records;
 
     def get_builder(self, imported_record):

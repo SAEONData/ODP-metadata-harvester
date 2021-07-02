@@ -3,6 +3,7 @@ import traceback
 from datetime import datetime
 import pandas
 from setup_logger import logger
+import HarvestController
 
 class RecordParseError(Exception):
     pass
@@ -45,6 +46,11 @@ class ExcelImporter:
                         raw_record[title] = row[title]
                     self.parse_raw_record(raw_record)
                     raw_records.append(raw_record)
+                    if raw_record['DOI']:
+                        HarvestController.HARVEST_STATS[raw_record['DOI']] = {'schema_errors':[], 'odp_errors':[], 'status':''}
+                    else:
+                        HarvestController.HARVEST_STATS[raw_record['fileIdentifier']] = {'schema_errors':[], 'odp_errors':[], 'status':''}
+                        
                 except RecordParseError as e:
                     logger.exception("{}Record id: {}".format(e, raw_record['fileIdentifier']))
         except Exception as e:
