@@ -233,7 +233,7 @@ class DataCiteSchemaGenerator(Schema):
             logger.warning(f'Record:{self.record_id}: Online Resources is empty, continuing with record')
             return
         for resource in online_resources:
-            if resource['description'] == 'download':
+            if resource['description'].replace(" ","") == 'download':
                 self.add_immutableResource(resource)
             elif resource['description'] == 'information':
                 self.record['linkedResources'] = []
