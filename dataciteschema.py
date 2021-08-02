@@ -11,6 +11,7 @@ class DataCiteSchemaGenerator(Schema):
         self.record['creators'] = []
         self.record['subjects'] = []
         self.record["dates"] = []
+        self.record['contributors'] = []
 
     def set_DOI(self,DOI):
         if not DOI:
@@ -98,7 +99,6 @@ class DataCiteSchemaGenerator(Schema):
             logger.warning(f'Record:{self.record_id}: Contributors is empty, continuing with record')
             return
         for person in contributors:
-            self.record['contributors'] = []
             self.record['contributors'].append(self.add_contributor(person))
 
     def add_contributor(self, contributors):
