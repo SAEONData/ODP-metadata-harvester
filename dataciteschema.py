@@ -242,9 +242,11 @@ class DataCiteSchemaGenerator(Schema):
                 pass
 
     def add_immutableResource(self, resource):
+            old_url = 'http://beta.'
+            new_url = 'https://'
             self.record["immutableResource"] = {
                 "resourceDownload": {
-                    "downloadURL" : resource['linkage']},
+                    "downloadURL" : resource['linkage'].replace(" ","").replace(old_url, new_url)},
                 "resourceName": resource['description'],
                 "resourceDescription": resource['name']
             }

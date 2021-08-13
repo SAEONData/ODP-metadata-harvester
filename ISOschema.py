@@ -206,6 +206,8 @@ class ISO19115chemaGenerator(Schema):
         self.record["lineageStatement"] = lineage
 
     def add_online_resources(self, onlineResources):
+        old_url = 'http://beta.'
+        new_url = 'https://'
         if not onlineResources:
             self._monitoring_helper(warning=f'Record:{self.record_id}: Mandatory online resource field is empty')
             return
@@ -216,7 +218,7 @@ class ISO19115chemaGenerator(Schema):
                 online_resource = {
                     "name": resource['name'].strip(),
                     "description": resource['description'].strip(),
-                    "linkage": resource['linkage'].strip()
+                    "linkage": resource['linkage'].strip().replace(old_url, new_url)
                 }
                 self.record["onlineResources"].append(online_resource)
 
